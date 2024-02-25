@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.messagebroker;
+package com.stocktrading.dataloader1.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
