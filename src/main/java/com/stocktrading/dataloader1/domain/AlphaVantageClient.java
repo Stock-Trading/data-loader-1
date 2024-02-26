@@ -14,7 +14,7 @@ public class AlphaVantageClient {
 
     public TimeSeriesDaily getTimeSeriesDaily() throws RestClientException {
         TimeSeriesDaily timeSeriesDaily = restClient.get()
-                .uri("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBMFSDFD&apikey=ZTX7QFX5EKRFFR0L")
+                .uri("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=ZTX7QFX5EKRFFR0L")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .body(TimeSeriesDaily.class);
