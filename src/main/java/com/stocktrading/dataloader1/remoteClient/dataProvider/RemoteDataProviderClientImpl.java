@@ -26,7 +26,7 @@ class RemoteDataProviderClientImpl implements RemoteDataProviderClient {
                 .retrieve()
                 .body(TimeSeriesDaily.class);
 
-        log.info("Trying to obtain Time series (daily) data for IBM from Alpha Vantage");
+        log.info("Trying to obtain Time series (daily) data for {} from Alpha Vantage", stockSymbol);
 
         if (timeSeriesDaily == null || timeSeriesDaily.metaData() == null || timeSeriesDaily.dayParametersMap() == null) {
             throw new RestClientException("Received empty payload. Check request parameters");

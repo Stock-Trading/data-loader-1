@@ -26,7 +26,7 @@ public class DataLoader1Application {
 	CommandLineRunner commandLineRunner(KafkaTemplate<String, String> template) {
 		String topic = "stockInfo";
 		String data = "this is my first stockInfo event";
-		log.debug("Sending data to the topic: " + topic + "; data: " + data);
+		log.debug("Trying to send data \"{}\" to the topic \"{}\"", data, topic);
 		return args -> {
 			template.send(topic, data);
 			log.info("Message \"{}\" has been sent to stockInfo topic", data);
