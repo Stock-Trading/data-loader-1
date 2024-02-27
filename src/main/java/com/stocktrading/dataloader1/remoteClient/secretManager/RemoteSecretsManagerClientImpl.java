@@ -14,10 +14,9 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
 @Log4j2
 class RemoteSecretsManagerClientImpl implements RemoteSecretsManagerClient {
 
-    private static final String API_KEY_DESCRIPTION_FROM_AWS_CONSOLE = "Alpha Vantage API Key associated with Piotr.Grochowiecki@gmail.com ";
-
     @Override
-    public String getSecretFromAws(String secretName, Region awsRegion) {
+    public String getSecretFromAws(String secretName, String secretDescription, Region awsRegion) {
+        log.info("Obtaining secret {} from AWS Secret Manager", secretName);
         try (SecretsManagerClient client = SecretsManagerClient.builder()
                 .region(awsRegion)
                 .build()) {
@@ -25,20 +24,20 @@ class RemoteSecretsManagerClientImpl implements RemoteSecretsManagerClient {
                     .secretId(secretName)
                     .build();
 
-            log.info("Obtaining secret {} from AWS Secret Manager", secretName);
-
             GetSecretValueResponse getSecretValueResponse = client.getSecretValue(getSecretValueRequest);
-            return getApiKeyFromKeyValueJsonPair(getSecretValueResponse.secretString());
+            String secretValue = getSecretFromKeyValueJsonPair(getSecretValueResponse.secretString(), secretDescription);
+            log.info("Successfully obtained secret {} from AWS Secret Manager", secretName);
+            return secretValue;
         } catch (Exception e) {
-            log.error("Could not obtain a secret {} from AWS Secret Manager. Exception has been thrown {}", secretName, e);
+            log.error("Could not obtain secret {} from AWS Secret Manager. Exception has been thrown {}", secretName, e);
             throw new AwsSecretManagerRuntimeException("Could not obtain a secret " + secretName +
                     " from AWS Secret Manager. Exception has been thrown " + e);
         }
     }
 
-    private String getApiKeyFromKeyValueJsonPair(String keyValueJsonPair) throws JsonProcessingException {
+    private String getSecretFromKeyValueJsonPair(String keyValueJsonPair, String secretDescription) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode node = objectMapper.readTree(keyValueJsonPair);
-        return node.get(API_KEY_DESCRIPTION_FROM_AWS_CONSOLE).asText();
+        return node.get(secretDescription).asText();
     }
 }
