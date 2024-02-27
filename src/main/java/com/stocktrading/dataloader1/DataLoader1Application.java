@@ -1,8 +1,8 @@
 package com.stocktrading.dataloader1;
 
-import com.stocktrading.dataloader1.domain.AlphaVantageClient;
+import com.stocktrading.dataloader1.domain.RemoteDataProviderClient;
 import lombok.AllArgsConstructor;
-import lombok.extern.apachecommons.CommonsLog;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,12 +10,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.client.RestClientException;
 
-@CommonsLog
+@Slf4j
 @SpringBootApplication
 @AllArgsConstructor
 public class DataLoader1Application {
 
-	private AlphaVantageClient alphaVantageClient;
+	private RemoteDataProviderClient remoteDataProviderClient;
 
 	public static void main(String[] args) {
 		SpringApplication.run(DataLoader1Application.class, args);
@@ -37,7 +37,7 @@ public class DataLoader1Application {
 		return args -> {
 			log.info("Calling Alpha Vantage for Time Series Daily for IBM");
 			try {
-				log.info(alphaVantageClient.getTimeSeriesDaily());
+				log.info(remoteDataProviderClient.getTimeSeriesDailyFromAlphaVantage("ibm").toString());
 			} catch (RestClientException restClientException) {
 				log.error("Error has occurred while trying to obtain Time Series Daily: " + restClientException.getMessage());
 			}
