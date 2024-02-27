@@ -1,9 +1,9 @@
-package com.stocktrading.dataloader1.domain;
+package com.stocktrading.dataloader1.remoteClient.dataProvider;
 
-import com.stocktrading.dataloader1.config.SecretsProvider;
+import com.stocktrading.dataloader1.remoteClient.secretManager.SecretsProvider;
 import lombok.RequiredArgsConstructor;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -11,8 +11,8 @@ import org.springframework.web.client.RestClientException;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
-public class RemoteDataProviderClientImpl implements RemoteDataProviderClient {
+@Log4j2
+class RemoteDataProviderClientImpl implements RemoteDataProviderClient {
 
     private final RestClient restClient;
     private final SecretsProvider secretsProvider;

@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.domain;
+package com.stocktrading.dataloader1.remoteClient.dataProvider;
 
 public enum AlphaVantageFunction {
     TIME_SERIES_DAILY,

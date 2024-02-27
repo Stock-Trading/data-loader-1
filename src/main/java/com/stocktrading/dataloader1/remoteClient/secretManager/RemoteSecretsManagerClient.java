@@ -1,8 +1,8 @@
-package com.stocktrading.dataloader1.config;
+package com.stocktrading.dataloader1.remoteClient.secretManager;
 
 import software.amazon.awssdk.regions.Region;
 
-public interface RemoteSecretsManagerClient {
+interface RemoteSecretsManagerClient {
 
     String getSecretFromAws(String secretName, Region awsRegion);
 

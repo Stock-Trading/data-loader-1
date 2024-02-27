@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.config;
+package com.stocktrading.dataloader1.remoteClient.secretManager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
 
 @Component
 @Log4j2
-public class RemoteSecretsManagerClientImpl implements RemoteSecretsManagerClient {
+class RemoteSecretsManagerClientImpl implements RemoteSecretsManagerClient {
 
     private static final String API_KEY_DESCRIPTION_FROM_AWS_CONSOLE = "Alpha Vantage API Key associated with Piotr.Grochowiecki@gmail.com ";
 

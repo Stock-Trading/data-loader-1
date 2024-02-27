@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.config;
+package com.stocktrading.dataloader1.remoteClient.secretManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
