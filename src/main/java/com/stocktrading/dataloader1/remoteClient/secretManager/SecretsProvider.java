@@ -20,8 +20,9 @@ public class SecretsProvider {
     @Cacheable("alpha-vantage-api-key")
     public String getAlphaVantageApiKey() {
         log.info("Trying to obtain Alpha Vantage API Key");
-        String secretName = "alpha-vantage-api-key";
-        Region region = Region.of("eu-north-1");
-        return remoteSecretsManagerClient.getSecretFromAws(secretName, region);
+        final String secretName = "alpha-vantage-api-key";
+        final String secretDescription = "Alpha Vantage API Key associated with Piotr.Grochowiecki@gmail.com ";
+        final Region region = Region.of("eu-north-1");
+        return remoteSecretsManagerClient.getSecretFromAws(secretName, secretDescription, region);
     }
 }

@@ -4,6 +4,6 @@ import software.amazon.awssdk.regions.Region;
 
 interface RemoteSecretsManagerClient {
 
-    String getSecretFromAws(String secretName, Region awsRegion);
+    String getSecretFromAws(String secretName, String secretDescription, Region awsRegion);
 
 }
