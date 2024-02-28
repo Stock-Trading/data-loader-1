@@ -1,5 +1,6 @@
 package com.stocktrading.dataloader1;
 
+import com.stocktrading.dataloader1.eventPublisher.StockDataEventPublisher;
 import com.stocktrading.dataloader1.remoteClient.dataProvider.RemoteDataProviderClient;
 import com.stocktrading.dataloader1.remoteClient.dataProvider.TimeSeriesDaily;
 import lombok.AllArgsConstructor;
@@ -17,19 +18,21 @@ import org.springframework.web.client.RestClientException;
 public class DataLoader1Application {
 
 	private RemoteDataProviderClient remoteDataProviderClient;
+	private StockDataEventPublisher stockDataEventPublisher;
 
 	public static void main(String[] args) {
 		SpringApplication.run(DataLoader1Application.class, args);
 	}
 
 	@Bean
-	CommandLineRunner commandLineRunner(KafkaTemplate<String, String> template) {
-		String topic = "stockInfo";
-		String data = "this is my first stockInfo event";
-		log.debug("Trying to send data \"{}\" to the topic \"{}\"", data, topic);
+	CommandLineRunner commandLineRunner() {
+//		String topic = "stockInfo";
+//		String data = "this is my first stockInfo event";
+//		log.debug("Trying to send data \"{}\" to the topic \"{}\"", data, topic);
+		log.info("Trying to publish data");
 		return args -> {
-			template.send(topic, data);
-			log.info("Message \"{}\" has been sent to stockInfo topic", data);
+			log.info("I am part of args. Can you see me?");
+			stockDataEventPublisher.publishTimeSeriesDailyEvent("ibm");
 		};
 	}
 
