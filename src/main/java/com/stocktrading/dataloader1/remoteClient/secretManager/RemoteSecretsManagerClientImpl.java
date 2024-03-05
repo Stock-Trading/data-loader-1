@@ -18,14 +18,14 @@ class RemoteSecretsManagerClientImpl implements RemoteSecretsManagerClient {
     public String getSecretFromAws(String secretName, String secretDescription, Region awsRegion) {
         log.info("Obtaining secret {} from AWS Secret Manager", secretName);
         try (SecretsManagerClient client = SecretsManagerClient.builder()
-                .region(awsRegion)
+                .region(awsRegion) //TODO zamiast metody builder i definiowania regionów, należy użyć metody create i nie trzeba wtedy definiować
                 .build()) {
             GetSecretValueRequest getSecretValueRequest = GetSecretValueRequest.builder()
                     .secretId(secretName)
                     .build();
 
             GetSecretValueResponse getSecretValueResponse = client.getSecretValue(getSecretValueRequest);
-            String secretValue = getSecretFromKeyValueJsonPair(getSecretValueResponse.secretString(), secretDescription);
+            String secretValue = getSecretFromKeyValueJsonPair(getSecretValueResponse.secretString(), secretDescription); //TODO sprawdzić metodę getValueForField
             log.info("Successfully obtained secret {} from AWS Secret Manager", secretName);
             return secretValue;
         } catch (Exception e) {

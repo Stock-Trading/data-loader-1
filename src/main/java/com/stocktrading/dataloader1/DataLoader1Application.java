@@ -21,31 +21,10 @@ public class DataLoader1Application {
 		SpringApplication.run(DataLoader1Application.class, args);
 	}
 
-	@Bean
-	CommandLineRunner commandLineRunner() {
-//		String topic = "stockInfo";
-//		String data = "this is my first stockInfo event";
-//		log.debug("Trying to send data \"{}\" to the topic \"{}\"", data, topic);
-		log.info("Trying to publish data");
-		return args -> {
-			log.info("I am part of args. Can you see me?");
-			stockDataEventPublisher.publishTimeSeriesDailyEvent("ibm");
-		};
-	}
-
-//	@Bean
-//	CommandLineRunner printTimeSeriesDailyOnStartup() {
-//		return args -> {
-//			log.info("Calling Alpha Vantage for Time Series Daily for IBM");
-//			try {
-//				String stockSymbol = "ibm";
-//				TimeSeriesDaily timeSeriesDailyIbm = remoteDataProviderClient.getTimeSeriesDailyFromAlphaVantage(stockSymbol);
-//				log.info("Received data for stock {} from Alpha Vantage. Excerpt from payload: {}", stockSymbol, timeSeriesDailyIbm.toString().substring(0, 200));
-//			} catch (RestClientException restClientException) {
-//				log.error("Error has occurred while trying to obtain Time Series Daily: " + restClientException.getMessage());
-//			}
-//
-//		};
-//	}
-
 }
+
+
+//TODO w pakiecie Domain powinien być serwis ze schedulerem regularnie wywołującym żądanie do zewnętrznego API pobierających dane
+// różne zewnętrzne API będą pobierać te same dane, ale w JSON (czy cokolwiek innego) może być inaczej skonstruowany
+// model domeny jest jeden, modele DTO powinny mapować do jednego modelu, który powinien być już ustalony
+// schemat budowy aplikacji jak w poprzednim projekcie
