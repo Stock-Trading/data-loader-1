@@ -1,6 +1,5 @@
-package com.stocktrading.dataloader1.config;
+package com.stocktrading.dataloader1.eventPublisher;
 
-import com.stocktrading.dataloader1.remoteClient.dataProvider.TimeSeriesDaily;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,19 +40,19 @@ public class KafkaProducerConfig {
         return properties;
     }
 
-    @Bean
-    public ProducerFactory<String, TimeSeriesDaily> stockDataProducerFactory() {
-        return new DefaultKafkaProducerFactory<>(getStockDataProducerConfiguration());
-    }
-
-    @Bean
-    public KafkaTemplate<String, String> kafkaTemplateFactory(ProducerFactory<String, String> producerFactory) {
-        return new KafkaTemplate<>(producerFactory);
-    }
-
-    @Bean
-    public KafkaTemplate<String, TimeSeriesDaily> timeSeriesDailyKafkaTemplate() {
-        return new KafkaTemplate<>(stockDataProducerFactory());
-    }
+//    @Bean
+//    public ProducerFactory<String, TimeSeriesDaily> stockDataProducerFactory() {
+//        return new DefaultKafkaProducerFactory<>(getStockDataProducerConfiguration());
+//    }
+//
+//    @Bean
+//    public KafkaTemplate<String, String> kafkaTemplateFactory(ProducerFactory<String, String> producerFactory) {
+//        return new KafkaTemplate<>(producerFactory);
+//    }
+//
+//    @Bean
+//    public KafkaTemplate<String, TimeSeriesDaily> timeSeriesDailyKafkaTemplate() {
+//        return new KafkaTemplate<>(stockDataProducerFactory());
+//    }
 
 }
