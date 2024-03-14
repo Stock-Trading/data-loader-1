@@ -1,7 +1,6 @@
 package com.stocktrading.dataloader1.remoteClient.finnhubclient;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
