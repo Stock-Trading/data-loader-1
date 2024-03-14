@@ -1,7 +1,6 @@
 package com.stocktrading.dataloader1.remoteClient.finnhubclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stocktrading.dataloader1.domain.FinnHubApiClientService;
 import com.stocktrading.dataloader1.domain.StockPriceModel;
 import com.stocktrading.dataloader1.domain.StockPriceService;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,7 @@ import java.util.List;
 @Component
 @Log4j2
 @AllArgsConstructor
-public class FinnHubHandler implements WebSocketHandler, FinnHubApiClientService {
+public class FinnHubHandler implements WebSocketHandler {
 
     private final StockPriceMapper mapper;
     private final StockPriceService service;
@@ -56,10 +55,11 @@ public class FinnHubHandler implements WebSocketHandler, FinnHubApiClientService
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) {
         log.error("Error while transporting: " + exception.getMessage() + ". Session id: " + session.getId());
+        throw new FinnHubApiClientRuntimeException("Error while transporting: " + exception.getMessage());
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
         log.info("Connection closed. Session id: " + session.getId() + ". Close status: " + closeStatus);
     }
 
@@ -68,8 +68,4 @@ public class FinnHubHandler implements WebSocketHandler, FinnHubApiClientService
         return false;
     }
 
-    @Override
-    public List<StockPriceModel> getStockPriceDataList(String jsonMessage) {
-        return null;
-    }
 }
