@@ -32,23 +32,23 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(getProducerConfiguration());
     }
 
-    public Map<String, Object> getStockDataProducerConfiguration() {
-        Map<String,Object> properties = new HashMap<>();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class); //TODO zobaczyć czy można protobuf
-        return properties;
-    }
+//    public Map<String, Object> getStockDataProducerConfiguration() {
+//        Map<String,Object> properties = new HashMap<>();
+//        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+//        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+//        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class); //TODO zobaczyć czy można protobuf
+//        return properties;
+//    }
 
 //    @Bean
 //    public ProducerFactory<String, TimeSeriesDaily> stockDataProducerFactory() {
 //        return new DefaultKafkaProducerFactory<>(getStockDataProducerConfiguration());
 //    }
 //
-//    @Bean
-//    public KafkaTemplate<String, String> kafkaTemplateFactory(ProducerFactory<String, String> producerFactory) {
-//        return new KafkaTemplate<>(producerFactory);
-//    }
+    @Bean
+    public KafkaTemplate<String, String> kafkaTemplateFactory(ProducerFactory<String, String> producerFactory) {
+        return new KafkaTemplate<>(producerFactory);
+    }
 //
 //    @Bean
 //    public KafkaTemplate<String, TimeSeriesDaily> timeSeriesDailyKafkaTemplate() {
