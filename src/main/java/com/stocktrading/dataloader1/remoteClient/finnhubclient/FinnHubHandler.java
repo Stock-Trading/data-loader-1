@@ -2,6 +2,7 @@ package com.stocktrading.dataloader1.remoteClient.finnhubclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stocktrading.dataloader1.domain.StockPriceModel;
+import com.stocktrading.dataloader1.domain.StockPriceReceivedEvent;
 import com.stocktrading.dataloader1.domain.StockPriceService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -38,14 +39,16 @@ public class FinnHubHandler implements WebSocketHandler {
                 WebSocketMessage<String> webSocketMessage = new TextMessage(pong);
                 session.sendMessage(webSocketMessage);
                 log.info("Sent \"pong\" message");
+            } else {
+                FinnHubTradeResponseDto finnHubTradeResponseDto = jsonMapper.readValue(message.getPayload().toString(), FinnHubTradeResponseDto.class);
+                log.info("Successfully parsed json into finnHubTradeResponseDto object");
+                List<StockPriceModel> stockPriceModelList = finnHubTradeResponseDto.dataList()
+                        .stream()
+                        .map(mapper::mapToModel)
+                        .toList();
+                StockPriceReceivedEvent stockPriceReceivedEvent = new StockPriceReceivedEvent(FinnHubHandler.class, stockPriceModelList);
+                service.publishStockPriceReceivedAsAppEvent(stockPriceReceivedEvent);
             }
-            FinnHubTradeResponseDto finnHubTradeResponseDto = jsonMapper.readValue(message.getPayload().toString(), FinnHubTradeResponseDto.class);
-            log.info("Successfully parsed json into finnHubTradeResponseDto object");
-            List<StockPriceModel> stockPriceModelList = finnHubTradeResponseDto.dataList()
-                    .stream()
-                    .map(mapper::mapToModel)
-                    .toList();
-            service.publishStockPriceEvent(stockPriceModelList);
         } catch (Exception e) {
             log.error("Caught exception: " + e.getMessage());
         }
@@ -60,7 +63,7 @@ public class FinnHubHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
-        log.info("Connection closed. Session id: " + session.getId() + ". Close status: " + closeStatus);
+        log.info("Connection closed. Session id: " + session.getId() + ". Close status: " + closeStatus.toString());
     }
 
     @Override
