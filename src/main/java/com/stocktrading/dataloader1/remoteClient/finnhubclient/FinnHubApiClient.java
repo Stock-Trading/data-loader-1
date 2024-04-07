@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 @Log4j2
-public class FinnHubApiClientOkHttp {
+public class FinnHubApiClient {
 
-    private final FinnHubHandlerOkHttp handlerOkHttp;
+    private final FinnHubApiHandler handler;
 
     private final static String uri = "wss://ws.finnhub.io?token=cnli7c9r01qk2u6r38j0cnli7c9r01qk2u6r38jg";
 
@@ -23,7 +23,7 @@ public class FinnHubApiClientOkHttp {
                 .build();
 
         OkHttpClient client = new OkHttpClient.Builder().build();
-        WebSocket webSocket = client.newWebSocket(request, handlerOkHttp);
+        WebSocket webSocket = client.newWebSocket(request, handler);
         log.info("Connected to FinnHub API");
 
     }

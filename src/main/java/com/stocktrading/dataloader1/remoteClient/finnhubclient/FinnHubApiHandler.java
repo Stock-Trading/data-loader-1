@@ -19,7 +19,7 @@ import java.util.List;
 @Component
 @Log4j2
 @AllArgsConstructor
-public class FinnHubHandlerOkHttp extends WebSocketListener {
+public class FinnHubApiHandler extends WebSocketListener {
 
     private final StockPriceMapper mapper;
     private final StockPriceService service;
@@ -40,7 +40,7 @@ public class FinnHubHandlerOkHttp extends WebSocketListener {
                         .stream()
                         .map(mapper::mapToModel)
                         .toList();
-                StockPriceReceivedEvent stockPriceReceivedEvent = new StockPriceReceivedEvent(FinnHubHandlerOkHttp.class, stockPriceModelList);
+                StockPriceReceivedEvent stockPriceReceivedEvent = new StockPriceReceivedEvent(FinnHubApiHandler.class, stockPriceModelList);
                 service.publishStockPriceReceivedAsAppEvent(stockPriceReceivedEvent);
             }
         } catch (Exception e) {
