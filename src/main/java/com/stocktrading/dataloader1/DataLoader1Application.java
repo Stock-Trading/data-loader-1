@@ -34,3 +34,9 @@ public class DataLoader1Application {
 //TODO zobaczyć czy jeden klient web socketowy może nadawać na wiele wątków
 
 //https://docs.spring.io/spring-framework/docs/4.3.5.RELEASE/spring-framework-reference/html/websocket.html#websocket-stomp-configuration-performance
+
+//TODO 26.03.2024 na razie nie przejmować się użytkownikiem, data loader powinien wrzucać wszystko co może do kafki, np. 20 instrumentów z 4 klientów
+
+//TODO Klient AWS Secret Managera powinien także być zwrócony ku domenie przez interfejs (obecnie nie jest)
+
+//TODO do FinnHub przy wielu klientach nadpisać header User-Agent, żeby spróbować uniknąć bana

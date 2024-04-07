@@ -1,6 +1,6 @@
 package com.stocktrading.dataloader1.eventPublisher;
 
-import com.stocktrading.dataloader1.domain.EventPublisher;
+import com.stocktrading.dataloader1.domain.KafkaEventPublisher;
 import com.stocktrading.dataloader1.domain.StockPriceModel;
 import com.stocktrading.dataloader1.domain.StockPriceReceivedEvent;
 import lombok.AllArgsConstructor;
@@ -10,12 +10,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.stocktrading.dataloader1.eventPublisher.EventTopic.STOCK_INFO;
-
 @Component
 @AllArgsConstructor
 @Log4j2
-public class StockDataEventPublisher implements ApplicationListener<StockPriceReceivedEvent>, EventPublisher {
+public class StockDataEventPublisher implements ApplicationListener<StockPriceReceivedEvent>, KafkaEventPublisher {
 
 //    private KafkaTemplate<String, TimeSeriesDaily> kafkaTemplate;
 
