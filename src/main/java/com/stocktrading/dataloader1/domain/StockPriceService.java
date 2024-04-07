@@ -10,10 +10,14 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class StockPriceService implements AppEventPublisher {
 
-    private final EventPublisher eventPublisher;
+    private final KafkaEventPublisher kafkaEventPublisher;
 
     @Override
     public void publishStockPriceReceivedAsAppEvent(StockPriceReceivedEvent stockPriceReceivedEvent) {
-        eventPublisher.publishLatestStockInfoEvent(stockPriceReceivedEvent.getStockPriceModelList());
+        kafkaEventPublisher.publishLatestStockInfoEvent(stockPriceReceivedEvent.getStockPriceModelList());
     }
 }
+
+//TODO publisher eventów springowych nasłuchuje w FinnHub kliencie czy przychodzą informacje,
+// kiedy przychodzą, wysyła event. Listiner eventów springowych także jest w domenie (wszystko wraca do domeny) i tam wywoływany
+// jest publisher Kafkowy
