@@ -12,12 +12,32 @@ import java.util.List;
 public class FinancialInstrumentRepositoryImpl implements FinancialInstrumentRepository {
 
     private final FinancialInstrumentJpaRepository jpaRepository;
-    private final Mapper mapper;
+    private final DataMapper mapper;
 
     @Override
     public FinancialInstrumentModel findById(Long id) {
         FinancialInstrumentEntity entity = jpaRepository.getReferenceById(id);
         return mapper.mapToModel(entity);
+    }
+
+    @Override
+    public FinancialInstrumentModel findByName(String name) {
+        FinancialInstrumentEntity entity = jpaRepository.getByName(name);
+        return mapper.mapToModel(entity);
+    }
+
+    @Override
+    public FinancialInstrumentModel findBySymbol(String symbol) {
+        FinancialInstrumentEntity entity = jpaRepository.getBySymbol(symbol);
+        return mapper.mapToModel(entity);
+    }
+
+    @Override
+    public List<FinancialInstrumentModel> findAll() {
+        return jpaRepository.findAll()
+                .stream()
+                .map(mapper::mapToModel)
+                .toList();
     }
 
     @Override
@@ -28,11 +48,23 @@ public class FinancialInstrumentRepositoryImpl implements FinancialInstrumentRep
     }
 
     @Override
-    public List<FinancialInstrumentModel> findAll() {
-        return jpaRepository.findAll()
-                .stream()
-                .map(mapper::mapToModel)
-                .toList();
+    public void deleteById(Long id) {
+        jpaRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteByName(String name) {
+        jpaRepository.deleteByName(name);
+    }
+
+    @Override
+    public void deleteBySymbol(String symbol) {
+        jpaRepository.deleteBySymbol(symbol);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return jpaRepository.existsById(id);
     }
 
     @Override
