@@ -20,19 +20,19 @@ class FinancialInstrumentController {
     private final ApiMapper mapper;
 
     @GetMapping("{id}")
-    FinancialInstrumentResponseDto handleGetById(@PathVariable("id") Long id) {
+    FinancialInstrumentResponseDto handleGetById(@PathVariable("id") @NotNull Long id) {
         FinancialInstrumentModel model = service.getById(id);
         return mapper.mapToResponseDto(model);
     }
 
     @GetMapping(params = "name")
-    FinancialInstrumentResponseDto handleGetByName(@RequestParam("name") String name) {
+    FinancialInstrumentResponseDto handleGetByName(@RequestParam("name") @NotBlank String name) {
         FinancialInstrumentModel model = service.getByName(name);
         return mapper.mapToResponseDto(model);
     }
 
     @GetMapping(params = "symbol")
-    FinancialInstrumentResponseDto handleGetBySymbol(@RequestParam("symbol") String symbol) {
+    FinancialInstrumentResponseDto handleGetBySymbol(@RequestParam("symbol") @NotBlank String symbol) {
         FinancialInstrumentModel model = service.getBySymbol(symbol);
         return mapper.mapToResponseDto(model);
     }
