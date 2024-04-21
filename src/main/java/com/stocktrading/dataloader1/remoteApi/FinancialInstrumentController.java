@@ -1,0 +1,84 @@
+package com.stocktrading.dataloader1.remoteApi;
+
+import com.stocktrading.dataloader1.domain.FinancialInstrumentModel;
+import com.stocktrading.dataloader1.domain.FinancialInstrumentService;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@AllArgsConstructor
+@RequestMapping("api/v1/financialInstrument")
+class FinancialInstrumentController {
+
+    private final FinancialInstrumentService service;
+    private final ApiMapper mapper;
+
+    @GetMapping("{id}")
+    FinancialInstrumentResponseDto handleGetById(@PathVariable("id") Long id) {
+        FinancialInstrumentModel model = service.getById(id);
+        return mapper.mapToResponseDto(model);
+    }
+
+    @GetMapping(params = "name")
+    FinancialInstrumentResponseDto handleGetByName(@RequestParam("name") String name) {
+        FinancialInstrumentModel model = service.getByName(name);
+        return mapper.mapToResponseDto(model);
+    }
+
+    @GetMapping(params = "symbol")
+    FinancialInstrumentResponseDto handleGetBySymbol(@RequestParam("symbol") String symbol) {
+        FinancialInstrumentModel model = service.getBySymbol(symbol);
+        return mapper.mapToResponseDto(model);
+    }
+
+    @GetMapping()
+    List<FinancialInstrumentResponseDto> handleGetAll() {
+        List<FinancialInstrumentModel> financialInstrumentModelList = service.getAllCurrentlySubscribed();
+        return financialInstrumentModelList.stream()
+                .map(mapper::mapToResponseDto)
+                .toList();
+    }
+
+    @PostMapping()
+    ResponseEntity<FinancialInstrumentSubscribeResponseDto> handleSubscribe(@RequestBody FinancialInstrumentSubscribeRequestDto subscribeRequestDto) {
+        FinancialInstrumentModel modelToBeSubscribed = mapper.mapToModel(subscribeRequestDto);
+        FinancialInstrumentModel subscribedModel = service.subscribeToTheInstrument(modelToBeSubscribed);
+        return new ResponseEntity<>(mapper.mapToSubscribeResponseDto(subscribedModel), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("{id}")
+    ResponseEntity<FinancialInstrumentUnsubscribeResponseDto> handleUnsubscribeById(@PathVariable @NotNull Long id) {
+        if (service.existsById(id)) {
+            FinancialInstrumentModel unsubscribedInstrument = service.unsubscribeFromTheInstrumentById(id);
+            return new ResponseEntity<>(mapper.mapToUnsubscribeResponseDto(unsubscribedInstrument), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping(params = "name")
+    ResponseEntity<FinancialInstrumentUnsubscribeResponseDto> handleUnsubscribeByName(@RequestParam("name") @NotBlank String name) {
+        if (service.existsByName(name)) {
+            FinancialInstrumentModel unsubscribedInstrument = service.unsubscribeFromTheInstrumentByName(name);
+            return new ResponseEntity<>(mapper.mapToUnsubscribeResponseDto(unsubscribedInstrument), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping(params = "symbol")
+    ResponseEntity<FinancialInstrumentUnsubscribeResponseDto> handleUnsubscribeBySymbol(@RequestParam("symbol") @NotBlank String symbol) {
+        if (service.existsBySymbol(symbol)) {
+            FinancialInstrumentModel unsubscribedInstrument = service.unsubscribeFromTheInstrumentBySymbol(symbol);
+            return new ResponseEntity<>(mapper.mapToUnsubscribeResponseDto(unsubscribedInstrument), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}

@@ -6,6 +6,7 @@ import com.stocktrading.dataloader1.domain.StockPriceModel;
 import com.stocktrading.dataloader1.domain.StockPriceReceivedEvent;
 import com.stocktrading.dataloader1.domain.StockPriceService;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -14,7 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Locale;
 
 @Component
 @Log4j2
@@ -48,6 +51,7 @@ public class FinnHubApiHandler extends WebSocketListener {
         }
     }
 
+    @SneakyThrows
     @Override
     public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
         List<String> listOfTemporaryCompaniesToSubscribeAsJsons = getTemporaryCompanies();
@@ -77,8 +81,8 @@ public class FinnHubApiHandler extends WebSocketListener {
         List<String> listOfSymbols = List.of("AAPL", "TSM", "GOOG", "WMT", "V", "MA", "NVDA", "MSFT", "INTC", "HPQ");
         return listOfSymbols.stream()
                 .map(symbol -> FinnHubMessageRequestDto.builder()
-                        .type(FinnHubMessageType.SUBSCRIBE)
-                        .content(symbol)
+                        .type(FinnHubMessageType.SUBSCRIBE.getMessageType())
+                        .symbol(symbol)
                         .build())
                 .map(requestDto -> {
                     try {

@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  StockTradingFinancialInstrumentsDb:
+    image: postgres:alpine3.18
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ''
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: stock_trading_financial_instruments
+    ports:
+      - "5432:5432"
+    volumes:
+      - c:\Users\piotr\containersStorage\StockTradingFinancialInstrumentsDb\:/var/lib/postgresql/data
