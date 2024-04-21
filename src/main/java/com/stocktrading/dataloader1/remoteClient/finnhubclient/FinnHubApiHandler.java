@@ -71,7 +71,6 @@ public class FinnHubApiHandler extends WebSocketListener {
         log.error("Failure connecting to {}. Response:{}. Throwable: {}", webSocket, response, t);
     }
 
-
     private List<String> getListOfInstrumentSymbolsAsJsonsToSubscribeOnStartup() {
         List<String> listOfSymbols = financialInstrumentService.getAllSymbolsOfCurrentlySubscribed();
         return listOfSymbols.stream()
