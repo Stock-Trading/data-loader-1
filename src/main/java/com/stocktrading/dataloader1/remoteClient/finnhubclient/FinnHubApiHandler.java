@@ -2,11 +2,8 @@ package com.stocktrading.dataloader1.remoteClient.finnhubclient;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stocktrading.dataloader1.domain.StockPriceModel;
-import com.stocktrading.dataloader1.domain.StockPriceReceivedEvent;
-import com.stocktrading.dataloader1.domain.StockPriceService;
+import com.stocktrading.dataloader1.domain.*;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -15,9 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.List;
-import java.util.Locale;
 
 @Component
 @Log4j2
@@ -26,6 +21,7 @@ public class FinnHubApiHandler extends WebSocketListener {
 
     private final StockPriceMapper mapper;
     private final StockPriceService service;
+    private final FinancialInstrumentService financialInstrumentService;
 
     private final static ObjectMapper jsonMapper = new ObjectMapper();
 
@@ -51,13 +47,12 @@ public class FinnHubApiHandler extends WebSocketListener {
         }
     }
 
-    @SneakyThrows
     @Override
     public void onOpen(@NotNull WebSocket webSocket, @NotNull Response response) {
-        List<String> listOfTemporaryCompaniesToSubscribeAsJsons = getTemporaryCompanies();
-        listOfTemporaryCompaniesToSubscribeAsJsons.forEach(request -> {
+        List<String> listOfInstrumentSymbols = getListOfInstrumentSymbolsAsJsonsToSubscribeOnStartup();
+        listOfInstrumentSymbols.forEach(request -> {
             webSocket.send(request);
-            log.info("Sent message on connection opening: {}", request);
+            log.info("Sent message on FinnHub connection opening: {}", request);
         });
     }
 
@@ -76,9 +71,8 @@ public class FinnHubApiHandler extends WebSocketListener {
         log.error("Failure connecting to {}. Response:{}. Throwable: {}", webSocket, response, t);
     }
 
-
-    private List<String> getTemporaryCompanies() {
-        List<String> listOfSymbols = List.of("AAPL", "TSM", "GOOG", "WMT", "V", "MA", "NVDA", "MSFT", "INTC", "HPQ");
+    private List<String> getListOfInstrumentSymbolsAsJsonsToSubscribeOnStartup() {
+        List<String> listOfSymbols = financialInstrumentService.getAllSymbolsOfCurrentlySubscribed();
         return listOfSymbols.stream()
                 .map(symbol -> FinnHubMessageRequestDto.builder()
                         .type(FinnHubMessageType.SUBSCRIBE.getMessageType())

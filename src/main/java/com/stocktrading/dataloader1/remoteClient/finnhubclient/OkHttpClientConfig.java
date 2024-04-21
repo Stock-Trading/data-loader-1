@@ -1,12 +1,11 @@
 package com.stocktrading.dataloader1.remoteClient.finnhubclient;
 
 import okhttp3.OkHttpClient;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class WebSocketClientConfig {
+public class OkHttpClientConfig {
 
     @Bean
     public OkHttpClient okHttpClient() {

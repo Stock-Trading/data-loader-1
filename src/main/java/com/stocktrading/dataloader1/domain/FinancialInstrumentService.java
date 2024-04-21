@@ -2,6 +2,7 @@ package com.stocktrading.dataloader1.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.util.List;
 public class FinancialInstrumentService {
 
     private final FinancialInstrumentRepository repository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public FinancialInstrumentModel getById(Long id) {
         return repository.findById(id);
@@ -30,17 +32,27 @@ public class FinancialInstrumentService {
         return repository.findAll();
     }
 
+    public List<String> getAllSymbolsOfCurrentlySubscribed() {
+        return repository.findAllSymbols();
+    }
+
     public FinancialInstrumentModel subscribeToTheInstrument(FinancialInstrumentModel model) {
-        return repository.save(model);
+        FinancialInstrumentModel instrumentToSubscribedTo = repository.save(model);
+        InstrumentSubscriptionStateChangedEvent subscribeEvent = new InstrumentSubscriptionStateChangedEvent(this, InstrumentSubscriptionStateChangeType.SUBSCRIBED, instrumentToSubscribedTo);
+        eventPublisher.publishEvent(subscribeEvent);
+        log.info("Published event {}", subscribeEvent.toString());
+        return instrumentToSubscribedTo;
     }
 
     @Transactional
     public FinancialInstrumentModel unsubscribeFromTheInstrumentById(Long id) {
         if (existsById(id)) {
-            FinancialInstrumentModel instrumentToBeUnsubscribed = repository.findById(id);
+            FinancialInstrumentModel instrumentToUnsubscribeFrom = repository.findById(id);
             repository.deleteById(id);
-            log.info("Unsubscribed from instrument with id of {}", id);
-            return instrumentToBeUnsubscribed;
+            InstrumentSubscriptionStateChangedEvent unsubscribeEvent = new InstrumentSubscriptionStateChangedEvent(this, InstrumentSubscriptionStateChangeType.UNSUBSCRIBED, instrumentToUnsubscribeFrom);
+            eventPublisher.publishEvent(unsubscribeEvent);
+            log.info("Published event: {}", unsubscribeEvent.toString());
+            return instrumentToUnsubscribeFrom;
         } else {
             log.info("Tried to unsubscribe from instrument with id of {}, but no entity with given id was found", id);
             return null;
@@ -50,10 +62,12 @@ public class FinancialInstrumentService {
     @Transactional
     public FinancialInstrumentModel unsubscribeFromTheInstrumentByName(String name) {
         if (existsByName(name)) {
-            FinancialInstrumentModel instrumentToBeUnsubscribed = repository.findByName(name);
+            FinancialInstrumentModel instrumentToUnsubscribeFrom = repository.findByName(name);
             repository.deleteByName(name);
-            log.info("Unsubscribed from instrument with name of {}", name);
-            return instrumentToBeUnsubscribed;
+            InstrumentSubscriptionStateChangedEvent unsubscribeEvent = new InstrumentSubscriptionStateChangedEvent(this, InstrumentSubscriptionStateChangeType.UNSUBSCRIBED, instrumentToUnsubscribeFrom);
+            eventPublisher.publishEvent(unsubscribeEvent);
+            log.info("Published event: {}", unsubscribeEvent.toString());
+            return instrumentToUnsubscribeFrom;
         } else {
             log.info("Tried to unsubscribe from instrument with name of {}, but no entity with given id was found", name);
             return null;
@@ -63,10 +77,12 @@ public class FinancialInstrumentService {
     @Transactional
     public FinancialInstrumentModel unsubscribeFromTheInstrumentBySymbol(String symbol) {
         if (existsBySymbol(symbol)) {
-            FinancialInstrumentModel instrumentToBeUnsubscribed = repository.findBySymbol(symbol);
+            FinancialInstrumentModel instrumentToUnsubscribeFrom = repository.findBySymbol(symbol);
             repository.deleteBySymbol(symbol);
-            log.info("Unsubscribed from instrument with symbol of {}", symbol);
-            return instrumentToBeUnsubscribed;
+            InstrumentSubscriptionStateChangedEvent unsubscribeEvent = new InstrumentSubscriptionStateChangedEvent(this, InstrumentSubscriptionStateChangeType.UNSUBSCRIBED, instrumentToUnsubscribeFrom);
+            eventPublisher.publishEvent(unsubscribeEvent);
+            log.info("Published event: {}", unsubscribeEvent.toString());
+            return instrumentToUnsubscribeFrom;
         } else {
             log.info("Tried to unsubscribe from instrument with symbol of {}, but no entity with given symbol was found", symbol);
             return null;
