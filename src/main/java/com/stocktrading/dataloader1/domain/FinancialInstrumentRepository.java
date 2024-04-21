@@ -12,6 +12,8 @@ public interface FinancialInstrumentRepository {
 
     List<FinancialInstrumentModel> findAll();
 
+    List<String> findAllSymbols();
+
     FinancialInstrumentModel save(FinancialInstrumentModel financialInstrumentModel);
 
     void deleteById(Long id);

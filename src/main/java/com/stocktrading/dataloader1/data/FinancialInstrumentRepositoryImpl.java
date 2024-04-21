@@ -41,6 +41,11 @@ public class FinancialInstrumentRepositoryImpl implements FinancialInstrumentRep
     }
 
     @Override
+    public List<String> findAllSymbols() {
+        return jpaRepository.getAllSymbols();
+    }
+
+    @Override
     public FinancialInstrumentModel save(FinancialInstrumentModel model) {
         FinancialInstrumentEntity entity = mapper.mapToEntity(model);
         FinancialInstrumentEntity savedEntity = jpaRepository.save(entity);
