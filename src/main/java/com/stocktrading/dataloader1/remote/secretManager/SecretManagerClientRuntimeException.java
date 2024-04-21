@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remoteClient.secretManager;
+package com.stocktrading.dataloader1.remote.secretManager;
 
 class SecretManagerClientRuntimeException extends RuntimeException {
 

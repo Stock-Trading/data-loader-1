@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remoteClient.finnhubclient;
+package com.stocktrading.dataloader1.remote.finnHub;
 
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;

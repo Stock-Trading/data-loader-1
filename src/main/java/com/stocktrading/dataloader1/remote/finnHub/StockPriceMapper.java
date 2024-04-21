@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remoteClient.finnhubclient;
+package com.stocktrading.dataloader1.remote.finnHub;
 
 import com.stocktrading.dataloader1.domain.StockPriceModel;
 import org.springframework.stereotype.Component;

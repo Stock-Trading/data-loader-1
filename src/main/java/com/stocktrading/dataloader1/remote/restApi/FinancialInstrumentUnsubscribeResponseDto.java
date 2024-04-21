@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remoteApi;
+package com.stocktrading.dataloader1.remote.restApi;
 
 import lombok.Builder;
 
