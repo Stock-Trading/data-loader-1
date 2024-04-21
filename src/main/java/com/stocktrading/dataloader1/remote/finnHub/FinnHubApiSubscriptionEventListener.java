@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remoteClient.finnhubclient;
+package com.stocktrading.dataloader1.remote.finnHub;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
