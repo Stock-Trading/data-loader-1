@@ -1,14 +1,15 @@
 package com.stocktrading.dataloader1.domain;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FinancialInstrumentRepository {
 
-    FinancialInstrumentModel findById(Long id);
+    Optional<FinancialInstrumentModel> findById(Long id);
 
-    FinancialInstrumentModel findByName(String name);
+    Optional<FinancialInstrumentModel> findByName(String name);
 
-    FinancialInstrumentModel findBySymbol(String symbol);
+    Optional<FinancialInstrumentModel> findBySymbol(String symbol);
 
     List<FinancialInstrumentModel> findAll();
 

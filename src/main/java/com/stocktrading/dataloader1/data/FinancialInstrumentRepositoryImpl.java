@@ -2,10 +2,12 @@ package com.stocktrading.dataloader1.data;
 
 import com.stocktrading.dataloader1.domain.FinancialInstrumentModel;
 import com.stocktrading.dataloader1.domain.FinancialInstrumentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
@@ -15,21 +17,33 @@ public class FinancialInstrumentRepositoryImpl implements FinancialInstrumentRep
     private final DataMapper mapper;
 
     @Override
-    public FinancialInstrumentModel findById(Long id) {
-        FinancialInstrumentEntity entity = jpaRepository.getReferenceById(id);
-        return mapper.mapToModel(entity);
+    public Optional<FinancialInstrumentModel> findById(Long id) {
+        try {
+            FinancialInstrumentEntity entity = jpaRepository.getReferenceById(id);
+            return Optional.of(mapper.mapToModel(entity));
+        } catch (EntityNotFoundException entityNotFoundException) {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public FinancialInstrumentModel findByName(String name) {
-        FinancialInstrumentEntity entity = jpaRepository.getByName(name);
-        return mapper.mapToModel(entity);
+    public Optional<FinancialInstrumentModel> findByName(String name) {
+        try {
+            FinancialInstrumentEntity entity = jpaRepository.getByName(name);
+            return Optional.of(mapper.mapToModel(entity));
+        } catch (EntityNotFoundException entityNotFoundException) {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public FinancialInstrumentModel findBySymbol(String symbol) {
-        FinancialInstrumentEntity entity = jpaRepository.getBySymbol(symbol);
-        return mapper.mapToModel(entity);
+    public Optional<FinancialInstrumentModel> findBySymbol(String symbol) {
+        try {
+            FinancialInstrumentEntity entity = jpaRepository.getBySymbol(symbol);
+            return Optional.of(mapper.mapToModel(entity));
+        } catch (EntityNotFoundException entityNotFoundException) {
+            return Optional.empty();
+        }
     }
 
     @Override
