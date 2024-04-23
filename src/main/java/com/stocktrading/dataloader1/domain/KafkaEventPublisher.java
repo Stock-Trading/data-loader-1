@@ -5,6 +5,6 @@ import java.util.List;
 
 public interface KafkaEventPublisher {
 
-    void publishLatestStockInfoEvent(List<StockPriceModel> stockPriceModel);
+    void publishLatestStockInfoEvent(List<FinancialInstrumentPriceModel> financialInstrumentPriceModel);
 
 }

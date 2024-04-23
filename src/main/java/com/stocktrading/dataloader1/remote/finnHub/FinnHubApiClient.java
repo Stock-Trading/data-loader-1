@@ -1,6 +1,5 @@
 package com.stocktrading.dataloader1.remote.finnHub;
 
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.OkHttpClient;
@@ -14,13 +13,10 @@ import org.springframework.stereotype.Component;
 @Log4j2
 public class FinnHubApiClient {
 
-    private final OkHttpClient client;
-    private final FinnHubApiHandler handler;
-
     private final static String uri = "wss://ws.finnhub.io?token=cnli7c9r01qk2u6r38j0cnli7c9r01qk2u6r38jg";
 
     @Bean
-    public WebSocket connectToFinnHubApi() {
+    public WebSocket connectToFinnHubApi(OkHttpClient client, FinnHubApiHandler handler) {
         Request request = new Request.Builder()
                 .url(uri)
                 .build();
@@ -28,10 +24,7 @@ public class FinnHubApiClient {
         log.info("Connected to FinnHub API");
         return webSocket;
     }
-//TODO jak dynamicznie uruchamiać i wyłączać kolejne websockety: klasa zarządzająca klientami WebSocketowymi
+//TODO jak dynamicznie uruchamiać i wyłączać kolejne websockety: klasa zarządzająca klientami WebSocketowymi, dostawałby
+// listę wszystkich wymaganych instrumentów do subskrypcji, iterował po wszystkich i odpowiednio rozdzielał po klientach
 
-    @PostConstruct
-    public void init() {
-        connectToFinnHubApi();
-    }
 }

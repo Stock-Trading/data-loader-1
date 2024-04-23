@@ -54,31 +54,19 @@ class FinancialInstrumentController {
 
     @DeleteMapping("{id}")
     ResponseEntity<FinancialInstrumentUnsubscribeResponseDto> handleUnsubscribeById(@PathVariable @NotNull Long id) {
-        if (service.existsById(id)) {
-            FinancialInstrumentModel unsubscribedInstrument = service.unsubscribeFromTheInstrumentById(id);
-            return new ResponseEntity<>(mapper.mapToUnsubscribeResponseDto(unsubscribedInstrument), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        FinancialInstrumentModel unsubscribedInstrument = service.unsubscribeFromTheInstrumentById(id);
+        return new ResponseEntity<>(mapper.mapToUnsubscribeResponseDto(unsubscribedInstrument), HttpStatus.OK);
     }
 
     @DeleteMapping(params = "name")
     ResponseEntity<FinancialInstrumentUnsubscribeResponseDto> handleUnsubscribeByName(@RequestParam("name") @NotBlank String name) {
-        if (service.existsByName(name)) {
-            FinancialInstrumentModel unsubscribedInstrument = service.unsubscribeFromTheInstrumentByName(name);
-            return new ResponseEntity<>(mapper.mapToUnsubscribeResponseDto(unsubscribedInstrument), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        FinancialInstrumentModel unsubscribedInstrument = service.unsubscribeFromTheInstrumentByName(name);
+        return new ResponseEntity<>(mapper.mapToUnsubscribeResponseDto(unsubscribedInstrument), HttpStatus.OK);
     }
 
     @DeleteMapping(params = "symbol")
     ResponseEntity<FinancialInstrumentUnsubscribeResponseDto> handleUnsubscribeBySymbol(@RequestParam("symbol") @NotBlank String symbol) {
-        if (service.existsBySymbol(symbol)) {
-            FinancialInstrumentModel unsubscribedInstrument = service.unsubscribeFromTheInstrumentBySymbol(symbol);
-            return new ResponseEntity<>(mapper.mapToUnsubscribeResponseDto(unsubscribedInstrument), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        FinancialInstrumentModel unsubscribedInstrument = service.unsubscribeFromTheInstrumentBySymbol(symbol);
+        return new ResponseEntity<>(mapper.mapToUnsubscribeResponseDto(unsubscribedInstrument), HttpStatus.OK);
     }
 }
