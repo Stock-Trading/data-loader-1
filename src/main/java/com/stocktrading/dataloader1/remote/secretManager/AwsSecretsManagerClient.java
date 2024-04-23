@@ -3,6 +3,7 @@ package com.stocktrading.dataloader1.remote.secretManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stocktrading.dataloader1.domain.RemoteSecretsManagerClient;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
@@ -13,26 +14,24 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
 @Log4j2
 class AwsSecretsManagerClient implements RemoteSecretsManagerClient {
 
-    /**
-     * @param secretName Name of the secret object in AWS Secret Manager
-     * @param secretKey Key for the secret value stored in AWS SM (secret is an AWS SM object stored (in this case) as key-value pair and send in JSON format)
-     * @return secret value
-     */
+    private static final String FINN_HUB_API_KEY_ONE_AWS_SECRET_NAME = "FinnHubApiKeyOne";
+    private static final String FINN_HUB_API_KEY_ONE_AWS_SECRET_KEY = "finnHubApiKeyOne";
+
     @Override
-    public String getSecret(String secretName, String secretKey) {
-        log.info("Obtaining secret {} from AWS Secret Manager", secretName);
+    public String getFirstFinnHubApiKey() {
+        log.info("Obtaining first FinnHub API Key from AWS Secret Manager");
         try (SecretsManagerClient client = SecretsManagerClient.create()) {
             GetSecretValueRequest getSecretValueRequest = GetSecretValueRequest.builder()
-                    .secretId(secretName)
+                    .secretId(FINN_HUB_API_KEY_ONE_AWS_SECRET_NAME)
                     .build();
 
             GetSecretValueResponse getSecretValueResponse = client.getSecretValue(getSecretValueRequest);
-            String secretValue = getSecretFromKeyValueJsonPair(getSecretValueResponse.secretString(), secretKey);
-            log.info("Successfully obtained secret {} from AWS Secret Manager", secretName);
+            String secretValue = getSecretFromKeyValueJsonPair(getSecretValueResponse.secretString(), FINN_HUB_API_KEY_ONE_AWS_SECRET_KEY);
+            log.info("Successfully obtained first FinnHub API Key from AWS Secret Manager");
             return secretValue;
         } catch (Exception e) {
-            log.error("Could not obtain secret {} from AWS Secret Manager. Exception has been thrown {}", secretName, e);
-            throw new SecretManagerClientRuntimeException("Could not obtain secret \"" + secretName +
+            log.error("Could not obtain secret {} from AWS Secret Manager. Exception has been thrown {}", FINN_HUB_API_KEY_ONE_AWS_SECRET_NAME, e);
+            throw new SecretManagerClientRuntimeException("Could not obtain secret \"" + FINN_HUB_API_KEY_ONE_AWS_SECRET_NAME +
                     "\" from AWS Secret Manager. Exception has been thrown " + e);
         }
     }
