@@ -1,7 +1,7 @@
 package com.stocktrading.dataloader1.remote.kafkaEventPublisher;
 
 import com.stocktrading.dataloader1.domain.KafkaEventPublisher;
-import com.stocktrading.dataloader1.domain.StockPriceModel;
+import com.stocktrading.dataloader1.domain.FinancialInstrumentPriceModel;
 import com.stocktrading.dataloader1.domain.StockPriceReceivedEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,11 +19,11 @@ public class StockDataEventPublisher implements ApplicationListener<StockPriceRe
 
     @Override
     public void onApplicationEvent(StockPriceReceivedEvent event) {
-        publishLatestStockInfoEvent(event.getStockPriceModelList());
+        publishLatestStockInfoEvent(event.getFinancialInstrumentPriceModelList());
     }
 
     @Override
-    public void publishLatestStockInfoEvent(List<StockPriceModel> stockPriceModelList) {
+    public void publishLatestStockInfoEvent(List<FinancialInstrumentPriceModel> financialInstrumentPriceModelList) {
 //        EventTopic topic = STOCK_INFO;
 //        stockPriceService.publishStockPriceEvent("AAPL");
 //        try {
@@ -34,7 +34,7 @@ public class StockDataEventPublisher implements ApplicationListener<StockPriceRe
 //            throw new EventPublishingRuntimeException("Exception was thrown while trying to publish an event: " + e);
 //        }
 
-        log.info("Info from kafka producer. Received stockPriceModelList" + stockPriceModelList);
+        log.info("Info from kafka producer. Received stockPriceModelList" + financialInstrumentPriceModelList);
 
     }
 

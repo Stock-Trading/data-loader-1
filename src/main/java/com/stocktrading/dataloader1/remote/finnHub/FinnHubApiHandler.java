@@ -35,11 +35,11 @@ public class FinnHubApiHandler extends WebSocketListener {
                 log.info("Sent \"pong\" message");
             } else {
                 FinnHubTradeResponseDto finnHubTradeResponseDto = jsonMapper.readValue(text, FinnHubTradeResponseDto.class);
-                List<StockPriceModel> stockPriceModelList = finnHubTradeResponseDto.dataList()
+                List<FinancialInstrumentPriceModel> financialInstrumentPriceModelList = finnHubTradeResponseDto.dataList()
                         .stream()
                         .map(mapper::mapToModel)
                         .toList();
-                StockPriceReceivedEvent stockPriceReceivedEvent = new StockPriceReceivedEvent(FinnHubApiHandler.class, stockPriceModelList);
+                StockPriceReceivedEvent stockPriceReceivedEvent = new StockPriceReceivedEvent(FinnHubApiHandler.class, financialInstrumentPriceModelList);
                 service.publishStockPriceReceivedAsAppEvent(stockPriceReceivedEvent);
             }
         } catch (Exception e) {

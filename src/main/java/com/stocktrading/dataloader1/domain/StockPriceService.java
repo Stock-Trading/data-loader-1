@@ -14,7 +14,7 @@ public class StockPriceService implements AppEventPublisher {
 
     @Override
     public void publishStockPriceReceivedAsAppEvent(StockPriceReceivedEvent stockPriceReceivedEvent) {
-        kafkaEventPublisher.publishLatestStockInfoEvent(stockPriceReceivedEvent.getStockPriceModelList());
+        kafkaEventPublisher.publishLatestStockInfoEvent(stockPriceReceivedEvent.getFinancialInstrumentPriceModelList());
     }
 }
 

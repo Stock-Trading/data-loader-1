@@ -1,6 +1,6 @@
 package com.stocktrading.dataloader1.remote.finnHub;
 
-import com.stocktrading.dataloader1.domain.StockPriceModel;
+import com.stocktrading.dataloader1.domain.FinancialInstrumentPriceModel;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -9,8 +9,8 @@ import java.time.ZoneId;
 
 @Component
 public class StockPriceMapper {
-    StockPriceModel mapToModel(StockPriceDto stockPriceDto) {
-        return StockPriceModel.builder()
+    FinancialInstrumentPriceModel mapToModel(StockPriceDto stockPriceDto) {
+        return FinancialInstrumentPriceModel.builder()
                 .symbol(stockPriceDto.symbol())
                 .priceUSD(stockPriceDto.price())
                 .dateTime(transformToLocalDateTime(stockPriceDto.timeStampUnixMili()))

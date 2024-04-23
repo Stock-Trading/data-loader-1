@@ -8,11 +8,11 @@ import java.util.List;
 @Getter
 public class StockPriceReceivedEvent extends ApplicationEvent {
 
-    private final List<StockPriceModel> stockPriceModelList;
+    private final List<FinancialInstrumentPriceModel> financialInstrumentPriceModelList;
 
-    public StockPriceReceivedEvent(Object source, List<StockPriceModel> stockPriceModelList) {
+    public StockPriceReceivedEvent(Object source, List<FinancialInstrumentPriceModel> financialInstrumentPriceModelList) {
         super(source);
-        this.stockPriceModelList = stockPriceModelList;
+        this.financialInstrumentPriceModelList = financialInstrumentPriceModelList;
     }
 
 }
