@@ -1,5 +1,6 @@
 package com.stocktrading.dataloader1.domain;
 
+import com.stocktrading.dataloader1.domain.model.FinancialInstrumentModel;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.context.ApplicationEvent;

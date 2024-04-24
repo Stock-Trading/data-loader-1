@@ -1,6 +1,6 @@
 package com.stocktrading.dataloader1.data;
 
-import com.stocktrading.dataloader1.domain.FinancialInstrumentModel;
+import com.stocktrading.dataloader1.domain.model.FinancialInstrumentModel;
 import com.stocktrading.dataloader1.domain.FinancialInstrumentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;

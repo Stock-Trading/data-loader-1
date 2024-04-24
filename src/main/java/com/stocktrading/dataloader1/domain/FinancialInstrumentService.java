@@ -2,6 +2,7 @@ package com.stocktrading.dataloader1.domain;
 
 import com.stocktrading.dataloader1.domain.exception.AlreadySubscribedException;
 import com.stocktrading.dataloader1.domain.exception.ModelNotFoundException;
+import com.stocktrading.dataloader1.domain.model.FinancialInstrumentModel;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationEventPublisher;

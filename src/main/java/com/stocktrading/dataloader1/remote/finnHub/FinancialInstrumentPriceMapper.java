@@ -1,6 +1,6 @@
 package com.stocktrading.dataloader1.remote.finnHub;
 
-import com.stocktrading.dataloader1.domain.FinancialInstrumentPriceModel;
+import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;

@@ -1,5 +1,7 @@
 package com.stocktrading.dataloader1.domain;
 
+import com.stocktrading.dataloader1.domain.model.FinancialInstrumentModel;
+
 import java.util.List;
 import java.util.Optional;
 

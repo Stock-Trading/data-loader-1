@@ -1,6 +1,6 @@
 package com.stocktrading.dataloader1.remote.restApi;
 
-import com.stocktrading.dataloader1.domain.FinancialInstrumentModel;
+import com.stocktrading.dataloader1.domain.model.FinancialInstrumentModel;
 import org.springframework.stereotype.Component;
 
 @Component

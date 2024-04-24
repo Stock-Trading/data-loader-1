@@ -1,6 +1,6 @@
 package com.stocktrading.dataloader1.remote.restApi;
 
-import com.stocktrading.dataloader1.domain.FinancialInstrumentModel;
+import com.stocktrading.dataloader1.domain.model.FinancialInstrumentModel;
 import com.stocktrading.dataloader1.domain.FinancialInstrumentService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
