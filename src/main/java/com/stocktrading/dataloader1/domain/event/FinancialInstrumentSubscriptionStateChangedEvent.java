@@ -12,9 +12,9 @@ public class FinancialInstrumentSubscriptionStateChangedEvent extends Applicatio
     private final FinancialInstrumentSubscriptionStateChangeType action;
     private final FinancialInstrumentModel financialInstrument;
 
-    public FinancialInstrumentSubscriptionStateChangedEvent(Object source, FinancialInstrumentSubscriptionStateChangeType action, FinancialInstrumentModel financialInstrument) {
+    public FinancialInstrumentSubscriptionStateChangedEvent(Object source, FinancialInstrumentSubscriptionStateChangeType changeType, FinancialInstrumentModel financialInstrument) {
         super(source);
-        this.action = action;
+        this.action = changeType;
         this.financialInstrument = financialInstrument;
     }
 
