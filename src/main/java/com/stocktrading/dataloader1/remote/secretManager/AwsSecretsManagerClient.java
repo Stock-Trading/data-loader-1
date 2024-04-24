@@ -3,7 +3,7 @@ package com.stocktrading.dataloader1.remote.secretManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stocktrading.dataloader1.domain.RemoteSecretsManagerClient;
+import com.stocktrading.dataloader1.domain.ports.RemoteSecretsManagerClient;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;

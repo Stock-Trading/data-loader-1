@@ -1,6 +1,6 @@
 package com.stocktrading.dataloader1.remote.finnHub;
 
-import com.stocktrading.dataloader1.domain.RemoteSecretsManagerClient;
+import com.stocktrading.dataloader1.domain.ports.RemoteSecretsManagerClient;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.OkHttpClient;

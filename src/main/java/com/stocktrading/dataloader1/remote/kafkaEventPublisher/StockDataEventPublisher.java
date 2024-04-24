@@ -1,6 +1,6 @@
 package com.stocktrading.dataloader1.remote.kafkaEventPublisher;
 
-import com.stocktrading.dataloader1.domain.KafkaEventPublisher;
+import com.stocktrading.dataloader1.domain.ports.KafkaEventPublisher;
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
 import com.stocktrading.dataloader1.domain.event.FinancialInstrumentPriceReceivedEvent;
 import lombok.AllArgsConstructor;
