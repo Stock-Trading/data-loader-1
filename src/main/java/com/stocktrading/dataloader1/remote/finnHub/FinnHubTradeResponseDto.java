@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public record FinnHubTradeResponseDto(
-        @JsonProperty("data") List<StockPriceDto> dataList,
+        @JsonProperty("data") List<FinancialInstrumentPriceDto> dataList,
         @JsonProperty("type") String type
 ) {
 }

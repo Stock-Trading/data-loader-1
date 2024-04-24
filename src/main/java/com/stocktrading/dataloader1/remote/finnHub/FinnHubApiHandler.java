@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FinnHubApiHandler extends WebSocketListener {
 
-    private final StockPriceMapper mapper;
+    private final FinancialInstrumentPriceMapper mapper;
     private final StockPriceService service;
     private final FinancialInstrumentService financialInstrumentService;
 

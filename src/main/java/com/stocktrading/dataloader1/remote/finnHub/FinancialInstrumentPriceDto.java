@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public record StockPriceDto(
+public record FinancialInstrumentPriceDto(
         @JsonProperty("p") Double price,
         @JsonProperty("s") String symbol,
         @JsonProperty("t") Long timeStampUnixMili,
