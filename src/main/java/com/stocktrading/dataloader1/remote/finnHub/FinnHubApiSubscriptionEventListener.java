@@ -2,7 +2,7 @@ package com.stocktrading.dataloader1.remote.finnHub;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stocktrading.dataloader1.domain.event.InstrumentSubscriptionStateChangedEvent;
+import com.stocktrading.dataloader1.domain.event.FinancialInstrumentSubscriptionStateChangedEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.WebSocket;
@@ -19,14 +19,14 @@ class FinnHubApiSubscriptionEventListener {
     private final static ObjectMapper jsonMapper = new ObjectMapper();
 
     @EventListener
-    void onSubscriptionStateChangeEvent(InstrumentSubscriptionStateChangedEvent event) {
+    void onSubscriptionStateChangeEvent(FinancialInstrumentSubscriptionStateChangedEvent event) {
         switch (event.getAction()) {
             case SUBSCRIBED -> prepareAndSendMessage(webSocket, event, FinnHubMessageType.SUBSCRIBE);
             case UNSUBSCRIBED -> prepareAndSendMessage(webSocket, event, FinnHubMessageType.UNSUBSCRIBE);
         }
     }
 
-    private void prepareAndSendMessage(WebSocket webSocket, InstrumentSubscriptionStateChangedEvent event, FinnHubMessageType messageType) {
+    private void prepareAndSendMessage(WebSocket webSocket, FinancialInstrumentSubscriptionStateChangedEvent event, FinnHubMessageType messageType) {
         FinnHubMessageRequestDto messageRequestDto = FinnHubMessageRequestDto.builder()
                 .type(messageType.getMessageType())
                 .symbol(event.getFinancialInstrument().symbol())

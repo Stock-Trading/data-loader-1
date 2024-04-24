@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum InstrumentSubscriptionStateChangeType {
+public enum FinancialInstrumentSubscriptionStateChangeType {
 
     SUBSCRIBED("subscribed"),
     UNSUBSCRIBED("unsubscribed");
