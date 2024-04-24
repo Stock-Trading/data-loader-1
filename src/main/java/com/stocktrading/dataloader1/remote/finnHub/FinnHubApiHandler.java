@@ -3,6 +3,7 @@ package com.stocktrading.dataloader1.remote.finnHub;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stocktrading.dataloader1.domain.*;
+import com.stocktrading.dataloader1.domain.event.StockPriceReceivedEvent;
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;

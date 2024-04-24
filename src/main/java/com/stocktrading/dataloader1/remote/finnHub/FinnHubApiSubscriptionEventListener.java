@@ -2,7 +2,7 @@ package com.stocktrading.dataloader1.remote.finnHub;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stocktrading.dataloader1.domain.InstrumentSubscriptionStateChangedEvent;
+import com.stocktrading.dataloader1.domain.event.InstrumentSubscriptionStateChangedEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.WebSocket;

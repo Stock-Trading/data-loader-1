@@ -2,7 +2,7 @@ package com.stocktrading.dataloader1.remote.kafkaEventPublisher;
 
 import com.stocktrading.dataloader1.domain.KafkaEventPublisher;
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
-import com.stocktrading.dataloader1.domain.StockPriceReceivedEvent;
+import com.stocktrading.dataloader1.domain.event.StockPriceReceivedEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationListener;

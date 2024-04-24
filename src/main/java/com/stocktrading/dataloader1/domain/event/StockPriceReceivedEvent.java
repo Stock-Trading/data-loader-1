@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.domain;
+package com.stocktrading.dataloader1.domain.event;
 
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
 import lombok.Getter;

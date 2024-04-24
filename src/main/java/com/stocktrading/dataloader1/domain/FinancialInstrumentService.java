@@ -1,5 +1,7 @@
 package com.stocktrading.dataloader1.domain;
 
+import com.stocktrading.dataloader1.domain.event.InstrumentSubscriptionStateChangeType;
+import com.stocktrading.dataloader1.domain.event.InstrumentSubscriptionStateChangedEvent;
 import com.stocktrading.dataloader1.domain.exception.AlreadySubscribedException;
 import com.stocktrading.dataloader1.domain.exception.ModelNotFoundException;
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentModel;
