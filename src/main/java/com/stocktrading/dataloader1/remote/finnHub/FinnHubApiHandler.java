@@ -12,6 +12,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,8 +23,8 @@ import java.util.List;
 public class FinnHubApiHandler extends WebSocketListener {
 
     private final FinancialInstrumentPriceMapper mapper;
-    private final StockPriceService service;
     private final FinancialInstrumentService financialInstrumentService;
+    private final ApplicationEventPublisher eventPublisher;
 
     private final static ObjectMapper jsonMapper = new ObjectMapper();
 
@@ -42,7 +43,7 @@ public class FinnHubApiHandler extends WebSocketListener {
                         .map(mapper::mapToModel)
                         .toList();
                 FinancialInstrumentPriceReceivedEvent financialInstrumentPriceReceivedEvent = new FinancialInstrumentPriceReceivedEvent(FinnHubApiHandler.class, financialInstrumentPriceModelList);
-                service.publishStockPriceReceivedAsAppEvent(financialInstrumentPriceReceivedEvent);
+                eventPublisher.publishEvent(financialInstrumentPriceReceivedEvent);
             }
         } catch (Exception e) {
             log.error("Caught exception: {}", e.getMessage());

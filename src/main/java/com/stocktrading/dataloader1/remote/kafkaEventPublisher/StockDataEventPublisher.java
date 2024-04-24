@@ -5,7 +5,7 @@ import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
 import com.stocktrading.dataloader1.domain.event.FinancialInstrumentPriceReceivedEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,17 +13,17 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 @Log4j2
-public class StockDataEventPublisher implements ApplicationListener<FinancialInstrumentPriceReceivedEvent>, KafkaEventPublisher {
+public class StockDataEventPublisher implements KafkaEventPublisher {
 
 //    private KafkaTemplate<String, TimeSeriesDaily> kafkaTemplate;
 
-    @Override
-    public void onApplicationEvent(FinancialInstrumentPriceReceivedEvent event) {
-        publishLatestStockInfoEvent(event.getFinancialInstrumentPriceModelList());
+    @EventListener
+    public void handleFinancialInstrumentPriceReceivedEvent(FinancialInstrumentPriceReceivedEvent event) {
+        publishFinancialInstrumentPriceInfoEvent(event.getFinancialInstrumentPriceModelList());
     }
 
     @Override
-    public void publishLatestStockInfoEvent(List<FinancialInstrumentPriceModel> financialInstrumentPriceModelList) {
+    public void publishFinancialInstrumentPriceInfoEvent(List<FinancialInstrumentPriceModel> financialInstrumentPriceModelList) {
 //        EventTopic topic = STOCK_INFO;
 //        stockPriceService.publishStockPriceEvent("AAPL");
 //        try {
