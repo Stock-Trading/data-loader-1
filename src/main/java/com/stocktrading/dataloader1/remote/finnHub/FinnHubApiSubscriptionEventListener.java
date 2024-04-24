@@ -19,7 +19,7 @@ class FinnHubApiSubscriptionEventListener {
     private final static ObjectMapper jsonMapper = new ObjectMapper();
 
     @EventListener
-    void onSubscriptionChangeEvent(InstrumentSubscriptionStateChangedEvent event) {
+    void onSubscriptionStateChangeEvent(InstrumentSubscriptionStateChangedEvent event) {
         switch (event.getAction()) {
             case SUBSCRIBED -> prepareAndSendMessage(webSocket, event, FinnHubMessageType.SUBSCRIBE);
             case UNSUBSCRIBED -> prepareAndSendMessage(webSocket, event, FinnHubMessageType.UNSUBSCRIBE);
