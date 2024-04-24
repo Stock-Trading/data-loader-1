@@ -7,11 +7,11 @@ import org.springframework.context.ApplicationEvent;
 import java.util.List;
 
 @Getter
-public class StockPriceReceivedEvent extends ApplicationEvent {
+public class FinancialInstrumentPriceReceivedEvent extends ApplicationEvent {
 
     private final List<FinancialInstrumentPriceModel> financialInstrumentPriceModelList;
 
-    public StockPriceReceivedEvent(Object source, List<FinancialInstrumentPriceModel> financialInstrumentPriceModelList) {
+    public FinancialInstrumentPriceReceivedEvent(Object source, List<FinancialInstrumentPriceModel> financialInstrumentPriceModelList) {
         super(source);
         this.financialInstrumentPriceModelList = financialInstrumentPriceModelList;
     }

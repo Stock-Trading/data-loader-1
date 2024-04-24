@@ -1,6 +1,6 @@
 package com.stocktrading.dataloader1.domain;
 
-import com.stocktrading.dataloader1.domain.event.StockPriceReceivedEvent;
+import com.stocktrading.dataloader1.domain.event.FinancialInstrumentPriceReceivedEvent;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -14,8 +14,8 @@ public class StockPriceService implements AppEventPublisher {
     private final KafkaEventPublisher kafkaEventPublisher;
 
     @Override
-    public void publishStockPriceReceivedAsAppEvent(StockPriceReceivedEvent stockPriceReceivedEvent) {
-        kafkaEventPublisher.publishLatestStockInfoEvent(stockPriceReceivedEvent.getFinancialInstrumentPriceModelList());
+    public void publishStockPriceReceivedAsAppEvent(FinancialInstrumentPriceReceivedEvent financialInstrumentPriceReceivedEvent) {
+        kafkaEventPublisher.publishLatestStockInfoEvent(financialInstrumentPriceReceivedEvent.getFinancialInstrumentPriceModelList());
     }
 }
 
