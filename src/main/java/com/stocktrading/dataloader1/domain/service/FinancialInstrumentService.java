@@ -1,7 +1,11 @@
-package com.stocktrading.dataloader1.domain;
+package com.stocktrading.dataloader1.domain.service;
 
+import com.stocktrading.dataloader1.domain.event.FinancialInstrumentSubscriptionStateChangeType;
+import com.stocktrading.dataloader1.domain.event.FinancialInstrumentSubscriptionStateChangedEvent;
 import com.stocktrading.dataloader1.domain.exception.AlreadySubscribedException;
 import com.stocktrading.dataloader1.domain.exception.ModelNotFoundException;
+import com.stocktrading.dataloader1.domain.model.FinancialInstrumentModel;
+import com.stocktrading.dataloader1.domain.ports.FinancialInstrumentRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationEventPublisher;
@@ -45,7 +49,7 @@ public class FinancialInstrumentService {
             throw new AlreadySubscribedException(message);
         }
         FinancialInstrumentModel instrumentToSubscribedTo = repository.save(model);
-        InstrumentSubscriptionStateChangedEvent subscribeEvent = new InstrumentSubscriptionStateChangedEvent(this, InstrumentSubscriptionStateChangeType.SUBSCRIBED, instrumentToSubscribedTo);
+        FinancialInstrumentSubscriptionStateChangedEvent subscribeEvent = new FinancialInstrumentSubscriptionStateChangedEvent(this, FinancialInstrumentSubscriptionStateChangeType.SUBSCRIBED, instrumentToSubscribedTo);
         eventPublisher.publishEvent(subscribeEvent);
         log.debug("Published event {}", subscribeEvent.toString());
         return instrumentToSubscribedTo;
@@ -55,7 +59,7 @@ public class FinancialInstrumentService {
     public FinancialInstrumentModel unsubscribeFromTheInstrumentById(Long id) {
         FinancialInstrumentModel instrumentToUnsubscribeFrom = repository.findById(id).orElseThrow(ModelNotFoundException::new);
         repository.deleteById(id);
-        InstrumentSubscriptionStateChangedEvent unsubscribeEvent = new InstrumentSubscriptionStateChangedEvent(this, InstrumentSubscriptionStateChangeType.UNSUBSCRIBED, instrumentToUnsubscribeFrom);
+        FinancialInstrumentSubscriptionStateChangedEvent unsubscribeEvent = new FinancialInstrumentSubscriptionStateChangedEvent(this, FinancialInstrumentSubscriptionStateChangeType.UNSUBSCRIBED, instrumentToUnsubscribeFrom);
         eventPublisher.publishEvent(unsubscribeEvent);
         log.debug("Published event: {}", unsubscribeEvent.toString());
         return instrumentToUnsubscribeFrom;
@@ -65,7 +69,7 @@ public class FinancialInstrumentService {
     public FinancialInstrumentModel unsubscribeFromTheInstrumentByName(String name) {
         FinancialInstrumentModel instrumentToUnsubscribeFrom = repository.findByName(name).orElseThrow(ModelNotFoundException::new);
         repository.deleteByName(name);
-        InstrumentSubscriptionStateChangedEvent unsubscribeEvent = new InstrumentSubscriptionStateChangedEvent(this, InstrumentSubscriptionStateChangeType.UNSUBSCRIBED, instrumentToUnsubscribeFrom);
+        FinancialInstrumentSubscriptionStateChangedEvent unsubscribeEvent = new FinancialInstrumentSubscriptionStateChangedEvent(this, FinancialInstrumentSubscriptionStateChangeType.UNSUBSCRIBED, instrumentToUnsubscribeFrom);
         eventPublisher.publishEvent(unsubscribeEvent);
         log.debug("Published event: {}", unsubscribeEvent.toString());
         return instrumentToUnsubscribeFrom;
@@ -75,7 +79,7 @@ public class FinancialInstrumentService {
     public FinancialInstrumentModel unsubscribeFromTheInstrumentBySymbol(String symbol) {
         FinancialInstrumentModel instrumentToUnsubscribeFrom = repository.findBySymbol(symbol).orElseThrow(ModelNotFoundException::new);
         repository.deleteBySymbol(symbol);
-        InstrumentSubscriptionStateChangedEvent unsubscribeEvent = new InstrumentSubscriptionStateChangedEvent(this, InstrumentSubscriptionStateChangeType.UNSUBSCRIBED, instrumentToUnsubscribeFrom);
+        FinancialInstrumentSubscriptionStateChangedEvent unsubscribeEvent = new FinancialInstrumentSubscriptionStateChangedEvent(this, FinancialInstrumentSubscriptionStateChangeType.UNSUBSCRIBED, instrumentToUnsubscribeFrom);
         eventPublisher.publishEvent(unsubscribeEvent);
         log.debug("Published event: {}", unsubscribeEvent.toString());
         return instrumentToUnsubscribeFrom;

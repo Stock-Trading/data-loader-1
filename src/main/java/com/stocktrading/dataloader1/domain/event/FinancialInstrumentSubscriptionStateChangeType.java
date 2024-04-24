@@ -1,11 +1,11 @@
-package com.stocktrading.dataloader1.domain;
+package com.stocktrading.dataloader1.domain.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum InstrumentSubscriptionStateChangeType {
+public enum FinancialInstrumentSubscriptionStateChangeType {
 
     SUBSCRIBED("subscribed"),
     UNSUBSCRIBED("unsubscribed");

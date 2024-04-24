@@ -1,4 +1,6 @@
-package com.stocktrading.dataloader1.domain;
+package com.stocktrading.dataloader1.domain.ports;
+
+import com.stocktrading.dataloader1.domain.model.FinancialInstrumentModel;
 
 import java.util.List;
 import java.util.Optional;

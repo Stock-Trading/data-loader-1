@@ -2,7 +2,9 @@ package com.stocktrading.dataloader1.remote.finnHub;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stocktrading.dataloader1.domain.*;
+import com.stocktrading.dataloader1.domain.event.FinancialInstrumentPriceReceivedEvent;
+import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
+import com.stocktrading.dataloader1.domain.service.FinancialInstrumentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
@@ -10,6 +12,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,9 +22,9 @@ import java.util.List;
 @AllArgsConstructor
 public class FinnHubApiHandler extends WebSocketListener {
 
-    private final StockPriceMapper mapper;
-    private final StockPriceService service;
+    private final FinancialInstrumentPriceMapper mapper;
     private final FinancialInstrumentService financialInstrumentService;
+    private final ApplicationEventPublisher eventPublisher;
 
     private final static ObjectMapper jsonMapper = new ObjectMapper();
 
@@ -39,8 +42,8 @@ public class FinnHubApiHandler extends WebSocketListener {
                         .stream()
                         .map(mapper::mapToModel)
                         .toList();
-                StockPriceReceivedEvent stockPriceReceivedEvent = new StockPriceReceivedEvent(FinnHubApiHandler.class, financialInstrumentPriceModelList);
-                service.publishStockPriceReceivedAsAppEvent(stockPriceReceivedEvent);
+                FinancialInstrumentPriceReceivedEvent financialInstrumentPriceReceivedEvent = new FinancialInstrumentPriceReceivedEvent(FinnHubApiHandler.class, financialInstrumentPriceModelList);
+                eventPublisher.publishEvent(financialInstrumentPriceReceivedEvent);
             }
         } catch (Exception e) {
             log.error("Caught exception: {}", e.getMessage());
