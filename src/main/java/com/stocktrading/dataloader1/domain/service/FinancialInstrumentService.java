@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.domain;
+package com.stocktrading.dataloader1.domain.service;
 
 import com.stocktrading.dataloader1.domain.event.FinancialInstrumentSubscriptionStateChangeType;
 import com.stocktrading.dataloader1.domain.event.FinancialInstrumentSubscriptionStateChangedEvent;
