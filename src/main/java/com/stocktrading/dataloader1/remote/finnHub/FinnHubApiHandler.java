@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stocktrading.dataloader1.domain.event.FinancialInstrumentPriceReceivedEvent;
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
-import com.stocktrading.dataloader1.domain.service.FinancialInstrumentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
@@ -23,8 +22,9 @@ import java.util.List;
 public class FinnHubApiHandler extends WebSocketListener {
 
     private final FinancialInstrumentPriceMapper mapper;
-    private final FinancialInstrumentService financialInstrumentService;
+//    private final FinancialInstrumentService financialInstrumentService;
     private final ApplicationEventPublisher eventPublisher;
+    private final List<String> listOfInstrumentsToSubscribeOnStartup;
 
     private final static ObjectMapper jsonMapper = new ObjectMapper();
 
@@ -55,7 +55,7 @@ public class FinnHubApiHandler extends WebSocketListener {
         List<String> listOfInstrumentSymbols = getListOfInstrumentSymbolsAsJsonsToSubscribeOnStartup();
         listOfInstrumentSymbols.forEach(request -> {
             webSocket.send(request);
-            log.info("Sent message on FinnHub connection opening: {}", request);
+            log.info("Sent message on FinnHub connection opening: {}. Thread: {}", request, Thread.currentThread().getName());
         });
     }
 
@@ -75,8 +75,8 @@ public class FinnHubApiHandler extends WebSocketListener {
     }
 
     private List<String> getListOfInstrumentSymbolsAsJsonsToSubscribeOnStartup() {
-        List<String> listOfSymbols = financialInstrumentService.getAllSymbolsOfCurrentlySubscribed();
-        return listOfSymbols.stream()
+//        List<String> listOfSymbols = financialInstrumentService.getAllSymbolsOfCurrentlySubscribed();
+        return listOfInstrumentsToSubscribeOnStartup.stream()
                 .map(symbol -> FinnHubMessageRequestDto.builder()
                         .type(FinnHubMessageType.SUBSCRIBE.getMessageType())
                         .symbol(symbol)
