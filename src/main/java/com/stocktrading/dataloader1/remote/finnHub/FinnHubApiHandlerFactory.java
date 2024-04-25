@@ -17,8 +17,6 @@ class FinnHubApiHandlerFactory {
     private final FinancialInstrumentPriceMapper mapper;
     private final ApplicationEventPublisher eventPublisher;
 
-    @Bean
-    @Scope(SCOPE_PROTOTYPE)
     FinnHubApiHandler getFinnHubApiHandler(List<String> listOfInstrumentsToSubscribeOnStartup) {
         return new FinnHubApiHandler(mapper, eventPublisher, listOfInstrumentsToSubscribeOnStartup);
     }

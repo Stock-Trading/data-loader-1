@@ -9,6 +9,7 @@ import okhttp3.Request;
 import okhttp3.WebSocket;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ class ClientsManager {
 
     private final static int NUMBER_OF_INSTRUMENTS_PER_CLIENT = 5;
 
-    void provideWebSocketClients() {
+    void provideWebSocketClients() throws InterruptedException {
         List<String> listOfAllSymbols = financialInstrumentService.getAllSymbolsOfCurrentlySubscribed();
 
         int numberOfAllInstruments = listOfAllSymbols.size();
@@ -54,33 +55,67 @@ class ClientsManager {
 
 //        List<WebSocket> webSocketList = new ArrayList<>();
         for (int i = 0; i < numberOfClientsToCreate; i++) {
-            OkHttpClient client = clientFactory.okHttpClient();
-
             if (i == 0) {
-                Request request = new Request.Builder()
-                        .url("wss://ws.finnhub.io?token=col6umhr01qkduilq8r0col6umhr01qkduilq8rg")
-                        //token for ggroch95@gmail.com
-                        .build();
+                final int tempIterator = i;
+                Runnable runnable = () -> {
+                    OkHttpClient client = clientFactory.okHttpClient();
+                    Request request = new Request.Builder()
+                            .url("wss://ws.finnhub.io?token=col6umhr01qkduilq8r0col6umhr01qkduilq8rg")
+                            //token for ggroch95@gmail.com
+                            .build();
 
-                WebSocket webSocket = client.newWebSocket(request, handlerFactory.getFinnHubApiHandler(listOfListOfSymbolsForGivenClientToSubscribe.get(i)));
-                log.info("Created web socket client {}. Thread: {}", webSocket.toString(), Thread.currentThread().getName());
+                    WebSocket webSocket = client.newWebSocket(request, handlerFactory.getFinnHubApiHandler(listOfListOfSymbolsForGivenClientToSubscribe.get(tempIterator)));
+                    log.info("Created web socket client {}. Thread: {}", webSocket.toString(), Thread.currentThread().threadId());
+                    try {
+                        log.info("going to sleep for 5 sec");
+                        Thread.sleep(Duration.ofSeconds(5));
+                        log.info("woke up after 5 sec");
+                    } catch (InterruptedException ignored) {
+
+                    }
+
+                    webSocket.cancel();
+
+                    try {
+                        log.info("going to sleep for another 5 sec");
+                        Thread.sleep(Duration.ofSeconds(5));
+                        log.info("woke up after another 5 sec");
+                    } catch (InterruptedException ignored) {
+
+                    }
+
+                    WebSocket webSocketRecreated = client.newWebSocket(request, handlerFactory.getFinnHubApiHandler(listOfListOfSymbolsForGivenClientToSubscribe.get(tempIterator)));
+                    log.info("Created web socket client {}. Thread: {}", webSocketRecreated.toString(), Thread.currentThread().threadId());
+
+                };
+                Thread thread = new Thread(runnable);
+                thread.start();
             }
             if (i == 1) {
-                Request request = new Request.Builder()
-                        .url("wss://ws.finnhub.io?token=cnli7c9r01qk2u6r38j0cnli7c9r01qk2u6r38jg")
-                        //token for piotrgrochowiecki@gmail.com
-                        .build();
+                final int tempIterator2 = i;
+                Runnable runnable2 = () -> {
+                    OkHttpClient client = clientFactory.okHttpClient();
+                    Request request = new Request.Builder()
+                            .url("wss://ws.finnhub.io?token=cnli7c9r01qk2u6r38j0cnli7c9r01qk2u6r38jg")
+                            //token for piotrgrochowiecki@gmail.com
+                            .build();
 
-                WebSocket webSocket = client.newWebSocket(request, handlerFactory.getFinnHubApiHandler(listOfListOfSymbolsForGivenClientToSubscribe.get(i)));
-                log.info("Created web socket client {}. Thread: {}", webSocket.toString(), Thread.currentThread().getName());
+                    WebSocket webSocket = client.newWebSocket(request, handlerFactory.getFinnHubApiHandler(listOfListOfSymbolsForGivenClientToSubscribe.get(tempIterator2)));
+                    log.info("Created web socket client {}. Thread: {}", webSocket.toString(), Thread.currentThread().threadId());
+                };
+                Thread thread2 = new Thread(runnable2);
+                thread2.start();
             }
-
         }
 //        return webSocketList;
     }
 
+    //TODO najpierw napisać ładne sterowanie, potem zająć się obsługą błędów (np. brak internetu, za dużo instrumentów do subskrybcji)
+    // sterowanie: musi być mechanizm nasłuchujący jakie żądanie (sub/unsub) i jakiego instrumentu przychodzi, np. websocket i lista jego subskrybcji w mapie.
+    // funkcja szuka odpowiedniego instrumentu i go unsubuje lub jeśli jest żądanie sub, to subskrybuje
+
     @PostConstruct
-    public void init() {
+    public void init() throws InterruptedException {
         provideWebSocketClients();
     }
 }

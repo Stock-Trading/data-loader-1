@@ -30,7 +30,7 @@ public class FinnHubApiHandler extends WebSocketListener {
 
     @Override
     public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
-        log.info("Received message from server: {}", text);
+        log.info("Thread: {}. Received message from server: {}", Thread.currentThread().threadId(), text);
         try {
             if (text.equals("{\"type\":\"ping\"}")) {
                 String pong = "{\"type\":\"pong\"}";
@@ -55,7 +55,7 @@ public class FinnHubApiHandler extends WebSocketListener {
         List<String> listOfInstrumentSymbols = getListOfInstrumentSymbolsAsJsonsToSubscribeOnStartup();
         listOfInstrumentSymbols.forEach(request -> {
             webSocket.send(request);
-            log.info("Sent message on FinnHub connection opening: {}. Thread: {}", request, Thread.currentThread().getName());
+            log.info("Sent message on FinnHub connection opening: {}. Thread: {}", request, Thread.currentThread().threadId());
         });
     }
 
