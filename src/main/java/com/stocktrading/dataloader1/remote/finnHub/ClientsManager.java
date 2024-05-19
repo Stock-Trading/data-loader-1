@@ -25,33 +25,8 @@ class ClientsManager {
     private final static int NUMBER_OF_INSTRUMENTS_PER_CLIENT = 5;
 
     void provideWebSocketClients() throws InterruptedException {
-        List<String> listOfAllSymbols = financialInstrumentService.getAllSymbolsOfCurrentlySubscribed();
-
-        int numberOfAllInstruments = listOfAllSymbols.size();
-        int numberOfClientsToCreate;
-
-        if ((numberOfAllInstruments % NUMBER_OF_INSTRUMENTS_PER_CLIENT) == 0) {
-            numberOfClientsToCreate = Math.divideExact(numberOfAllInstruments, NUMBER_OF_INSTRUMENTS_PER_CLIENT);
-        } else {
-            numberOfClientsToCreate = Math.divideExact(numberOfAllInstruments, NUMBER_OF_INSTRUMENTS_PER_CLIENT) + 1;
-        }
-
-        List<List<String>> listOfListOfSymbolsForGivenClientToSubscribe = new ArrayList<>();
-
-        for (int i = 1; i <= numberOfAllInstruments; i++) {
-            if (i % NUMBER_OF_INSTRUMENTS_PER_CLIENT != 0) {
-                continue;
-            }
-            List<String> listOfSymbolsForGivenClientToSubscribe;
-            listOfSymbolsForGivenClientToSubscribe = listOfAllSymbols.subList(i - 5, i);
-            listOfListOfSymbolsForGivenClientToSubscribe.add(listOfSymbolsForGivenClientToSubscribe);
-        }
-
-        int numberOfLastSymbolsToAdd = numberOfAllInstruments % NUMBER_OF_INSTRUMENTS_PER_CLIENT;
-        if (numberOfLastSymbolsToAdd != 0) {
-            List<String> lastListOfSymbolsToSubscribe = listOfAllSymbols.subList(listOfAllSymbols.size() - numberOfLastSymbolsToAdd, listOfAllSymbols.size());
-            listOfListOfSymbolsForGivenClientToSubscribe.add(lastListOfSymbolsToSubscribe);
-        }
+        final int numberOfClientsToCreate = calculateNumberOfRequiredClientsOnStartup();
+        final List<List<String>> listOfListOfSymbolsForGivenClientToSubscribe = constructListOfListOfFinancialInstrumentSymbolsForMultipleClientsToSubscribeOnStartup();
 
 //        List<WebSocket> webSocketList = new ArrayList<>();
         for (int i = 0; i < numberOfClientsToCreate; i++) {
@@ -118,4 +93,22 @@ class ClientsManager {
     public void init() throws InterruptedException {
         provideWebSocketClients();
     }
+
+    private List<List<String>> constructListOfListOfFinancialInstrumentSymbolsForMultipleClientsToSubscribeOnStartup() {
+        final List<String> listOfAllSymbols = financialInstrumentService.getAllSymbolsOfCurrentlySubscribed();
+        List<List<String>> listOfListOfSymbolsForGivenClientToSubscribe = new ArrayList<>();
+
+        for (int i = 0; i < listOfAllSymbols.size(); i += NUMBER_OF_INSTRUMENTS_PER_CLIENT) {
+            int end = Math.min(i + NUMBER_OF_INSTRUMENTS_PER_CLIENT, listOfAllSymbols.size());
+            List<String> sublist = listOfAllSymbols.subList(i, end);
+            listOfListOfSymbolsForGivenClientToSubscribe.add(sublist);
+        }
+        return listOfListOfSymbolsForGivenClientToSubscribe;
+    }
+
+    private int calculateNumberOfRequiredClientsOnStartup() {
+        int numberOfAllInstruments = financialInstrumentService.getAllSymbolsOfCurrentlySubscribed().size();
+        return (numberOfAllInstruments + NUMBER_OF_INSTRUMENTS_PER_CLIENT - 1) / NUMBER_OF_INSTRUMENTS_PER_CLIENT;
+    }
+
 }
