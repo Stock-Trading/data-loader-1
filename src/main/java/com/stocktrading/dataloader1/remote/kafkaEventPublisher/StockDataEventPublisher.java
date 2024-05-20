@@ -34,7 +34,7 @@ public class StockDataEventPublisher implements KafkaEventPublisher {
 //            throw new EventPublishingRuntimeException("Exception was thrown while trying to publish an event: " + e);
 //        }
 
-        log.info("Info from kafka producer. Received stockPriceModelList" + financialInstrumentPriceModelList);
+//        log.info("Info from kafka producer. Received stockPriceModelList" + financialInstrumentPriceModelList);
 
     }
 

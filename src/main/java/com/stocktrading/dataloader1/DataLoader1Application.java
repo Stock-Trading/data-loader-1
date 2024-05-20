@@ -1,5 +1,6 @@
 package com.stocktrading.dataloader1;
 
+import com.stocktrading.dataloader1.remote.finnHub.FinnHubApiSubscriptionEventListener;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.SpringApplication;
