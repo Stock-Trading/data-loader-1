@@ -41,7 +41,7 @@ public class FinnHubApiSubscriptionEventListener {
 
     private void subscribe(ConcurrentHashMap<WebSocket, List<String>> map, FinancialInstrumentSubscriptionStateChangedEvent event) {
         for (Map.Entry<WebSocket, List<String>> entry : map.entrySet()) {
-            if (entry.getValue().size() < 5) {
+            if (entry.getValue().size() < 5) { //TODO zamienić 5 na parametr
                 prepareAndSendMessage(entry.getKey(), event, FinnHubMessageType.SUBSCRIBE);
             } else {
                 log.info("Web socket client {} already listens to max number of financial instruments", entry.getKey().toString());

@@ -1,5 +1,6 @@
 package com.stocktrading.dataloader1.remote.finnHub;
 
+import com.stocktrading.dataloader1.domain.ports.RemoteSecretsManagerClient;
 import com.stocktrading.dataloader1.domain.service.FinancialInstrumentService;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
@@ -8,12 +9,11 @@ import lombok.extern.log4j.Log4j2;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Log4j2
@@ -25,12 +25,18 @@ class ClientsManager {
     private final FinancialInstrumentService financialInstrumentService;
     private final OkHttpClientFactory clientFactory;
     private final FinnHubApiHandlerFactory handlerFactory;
+    private final RemoteSecretsManagerClient remoteSecretsManagerClient;
 
     private final ConcurrentHashMap<WebSocket, List<String>> webSocketAndFinancialInstrumentsListConcurrentHashMap = new ConcurrentHashMap<>();
+    //TODO mapę jako pole powinna być zastąpiona oddzielnym serwisem z metodami, np. dodania nowego websocketu, znajdz web socket, usun websocket. Taki serwis powinien przechowywać aktualny stan
 
     private final static String FINNHUB_BASE_URL = "wss://ws.finnhub.io?token=";
-    private final static List<String> TOKEN_LIST = List.of("col6umhr01qkduilq8r0col6umhr01qkduilq8rg", "cnli7c9r01qk2u6r38j0cnli7c9r01qk2u6r38jg");
-    private final static int NUMBER_OF_INSTRUMENTS_PER_CLIENT = 5;
+
+    @Value("${max_number_of_financial_instruments_per_client}")
+    private Integer NUMBER_OF_INSTRUMENTS_PER_CLIENT;
+
+    @Value("${number_of_available_finnhub_tokens}")
+    private Integer NUMBER_OF_AVAILABLE_FINNHUB_TOKENS;
 
     void provideWebSocketClients() {
         final int numberOfClientsToCreate = calculateNumberOfRequiredClientsOnStartup();
@@ -46,7 +52,7 @@ class ClientsManager {
             List<String> listOfSymbolsToSubscribe = listOfListOfSymbolsForGivenClientToSubscribe.get(clientNumber);
             OkHttpClient client = clientFactory.okHttpClient();
             Request request = new Request.Builder()
-                    .url(FINNHUB_BASE_URL + ClientsManager.TOKEN_LIST.get(clientNumber))
+                    .url(FINNHUB_BASE_URL + remoteSecretsManagerClient.getFinnHubApiKeys().get(clientNumber))
                     .build();
 
             WebSocket webSocket = client.newWebSocket(request, handlerFactory.getFinnHubApiHandler(listOfSymbolsToSubscribe));
@@ -58,6 +64,7 @@ class ClientsManager {
         Thread webSocketFinnHubClientThread = new Thread(clientConfigurationRunnable);
         webSocketFinnHubClientThread.start();
     }
+    //TODO 21.05.2024:
 
     //TODO najpierw napisać ładne sterowanie, potem zająć się obsługą błędów (np. brak internetu, za dużo instrumentów do subskrybcji)
     // sterowanie: musi być mechanizm nasłuchujący jakie żądanie (sub/unsub) i jakiego instrumentu przychodzi, np. websocket i lista jego subskrybcji w mapie.
@@ -78,11 +85,11 @@ class ClientsManager {
             listOfListOfSymbolsForGivenClientToSubscribe.add(sublist);
         }
         return listOfListOfSymbolsForGivenClientToSubscribe;
-    }
+    } //TODO pomyśleć nad zamianą tego. Lista list jest zła!
 
     private int calculateNumberOfRequiredClientsOnStartup() {
         int numberOfAllInstruments = financialInstrumentService.getAllSymbolsOfCurrentlySubscribed().size();
-        return (numberOfAllInstruments + NUMBER_OF_INSTRUMENTS_PER_CLIENT - 1) / NUMBER_OF_INSTRUMENTS_PER_CLIENT;
+        return Math.min(((numberOfAllInstruments + NUMBER_OF_INSTRUMENTS_PER_CLIENT - 1) / NUMBER_OF_INSTRUMENTS_PER_CLIENT), NUMBER_OF_AVAILABLE_FINNHUB_TOKENS);
     }
 
 }

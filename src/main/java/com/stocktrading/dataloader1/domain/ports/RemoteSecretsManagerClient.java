@@ -1,7 +1,9 @@
 package com.stocktrading.dataloader1.domain.ports;
 
+import java.util.List;
+
 public interface RemoteSecretsManagerClient {
 
-    String getFirstFinnHubApiKey();
+    List<String> getFinnHubApiKeys();
 
 }

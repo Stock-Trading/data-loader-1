@@ -41,3 +41,5 @@ public class DataLoader1Application {
 //TODO Klient AWS Secret Managera powinien także być zwrócony ku domenie przez interfejs (obecnie nie jest)
 
 //TODO do FinnHub przy wielu klientach nadpisać header User-Agent, żeby spróbować uniknąć bana
+
+//TODO 21.05.2024:
