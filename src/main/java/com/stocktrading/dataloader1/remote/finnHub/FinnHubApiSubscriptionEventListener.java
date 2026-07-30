@@ -14,29 +14,29 @@ import org.springframework.stereotype.Component;
 @Log4j2
 class FinnHubApiSubscriptionEventListener {
 
-    private final WebSocket webSocket;
-
-    private final static ObjectMapper jsonMapper = new ObjectMapper();
-
-    @EventListener
-    void onSubscriptionStateChangeEvent(FinancialInstrumentSubscriptionStateChangedEvent event) {
-        switch (event.getAction()) {
-            case SUBSCRIBED -> prepareAndSendMessage(webSocket, event, FinnHubMessageType.SUBSCRIBE);
-            case UNSUBSCRIBED -> prepareAndSendMessage(webSocket, event, FinnHubMessageType.UNSUBSCRIBE);
-        }
-    }
-
-    private void prepareAndSendMessage(WebSocket webSocket, FinancialInstrumentSubscriptionStateChangedEvent event, FinnHubMessageType messageType) {
-        FinnHubMessageRequestDto messageRequestDto = FinnHubMessageRequestDto.builder()
-                .type(messageType.getMessageType())
-                .symbol(event.getFinancialInstrument().symbol())
-                .build();
-        try {
-            webSocket.send(jsonMapper.writeValueAsString(messageRequestDto));
-            log.info("Sent message to FinnHub API {} as reaction to event {}", messageRequestDto, event);
-        } catch (JsonProcessingException jpe) {
-            throw new FinnHubApiClientRuntimeException("Exception while serializing to json: " + jpe.getMessage());
-        }
-    }
+//    private final WebSocket webSocket;
+//
+//    private final static ObjectMapper jsonMapper = new ObjectMapper();
+//
+//    @EventListener
+//    void onSubscriptionStateChangeEvent(FinancialInstrumentSubscriptionStateChangedEvent event) {
+//        switch (event.getAction()) {
+//            case SUBSCRIBED -> prepareAndSendMessage(webSocket, event, FinnHubMessageType.SUBSCRIBE);
+//            case UNSUBSCRIBED -> prepareAndSendMessage(webSocket, event, FinnHubMessageType.UNSUBSCRIBE);
+//        }
+//    }
+//
+//    private void prepareAndSendMessage(WebSocket webSocket, FinancialInstrumentSubscriptionStateChangedEvent event, FinnHubMessageType messageType) {
+//        FinnHubMessageRequestDto messageRequestDto = FinnHubMessageRequestDto.builder()
+//                .type(messageType.getMessageType())
+//                .symbol(event.getFinancialInstrument().symbol())
+//                .build();
+//        try {
+//            webSocket.send(jsonMapper.writeValueAsString(messageRequestDto));
+//            log.info("Sent message to FinnHub API {} as reaction to event {}", messageRequestDto, event);
+//        } catch (JsonProcessingException jpe) {
+//            throw new FinnHubApiClientRuntimeException("Exception while serializing to json: " + jpe.getMessage());
+//        }
+//    }
 
 }
