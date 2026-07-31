@@ -1,7 +1,6 @@
 package com.stocktrading.dataloader1.remote.finnHub;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.stocktrading.dataloader1.domain.event.FinancialInstrumentPriceReceivedEvent;
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
 import com.stocktrading.dataloader1.domain.service.FinancialInstrumentService;
@@ -84,8 +83,8 @@ public class FinnHubApiHandler extends WebSocketListener {
                 .map(requestDto -> {
                     try {
                         return jsonMapper.writeValueAsString(requestDto);
-                    } catch (JsonProcessingException jpe) {
-                        throw new FinnHubApiClientRuntimeException("Exception while serializing to json: " + jpe.getMessage());
+                    } catch (Exception e) {
+                        throw new FinnHubApiClientRuntimeException("Exception while serializing to json: " + e.getMessage());
                     }
                 })
                 .toList();
