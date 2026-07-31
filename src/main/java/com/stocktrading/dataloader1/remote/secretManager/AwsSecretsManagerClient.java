@@ -1,14 +1,13 @@
 package com.stocktrading.dataloader1.remote.secretManager;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stocktrading.dataloader1.domain.ports.RemoteSecretsManagerClient;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @Component
 @Log4j2
@@ -36,7 +35,7 @@ class AwsSecretsManagerClient implements RemoteSecretsManagerClient {
         }
     }
 
-    private String getSecretFromKeyValueJsonPair(String keyValueJsonPair, String secretDescription) throws JsonProcessingException {
+    private String getSecretFromKeyValueJsonPair(String keyValueJsonPair, String secretDescription) {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode node = objectMapper.readTree(keyValueJsonPair);
         return node.get(secretDescription).asText();
