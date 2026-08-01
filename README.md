@@ -36,7 +36,7 @@ The codebase follows a loose hexagonal / ports-and-adapters style:
   - `service` — application services orchestrating use cases (`FinancialInstrumentService`, `DataLoaderService`)
   - `event` / `exception` — domain events and exceptions
 - `remote` — adapters implementing the ports above
-  - `subbscriptionmanager` — REST client that registers/checks in with the Subscription Manager and fetches the current subscription
+  - `subscriptionmanager` — REST client that registers/checks in with the Subscription Manager and fetches the current subscription
   - `finnHub` — WebSocket client/handler talking to the FinnHub API
   - `kafkaEventPublisher` — publishes unified price events to Kafka
   - `restApi` — local REST API + JPA persistence for subscribed financial instruments (see below)
