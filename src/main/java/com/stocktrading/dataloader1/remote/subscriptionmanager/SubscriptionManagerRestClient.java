@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remote.subbscriptionmanager;
+package com.stocktrading.dataloader1.remote.subscriptionmanager;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

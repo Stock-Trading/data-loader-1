@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remote.subbscriptionmanager;
+package com.stocktrading.dataloader1.remote.subscriptionmanager;
 
 import com.stocktrading.dataloader1.domain.model.DataLoaderModel;
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentModel;
