@@ -9,11 +9,12 @@ import java.time.ZoneId;
 
 @Component
 public class FinancialInstrumentPriceMapper {
-    FinancialInstrumentPriceModel mapToModel(FinancialInstrumentPriceDto financialInstrumentPriceDto) {
+
+    FinancialInstrumentPriceModel mapToModel(FinancialInstrumentPriceResponse financialInstrumentPriceResponse) {
         return FinancialInstrumentPriceModel.builder()
-                .symbol(financialInstrumentPriceDto.symbol())
-                .priceUSD(financialInstrumentPriceDto.price())
-                .dateTime(transformToLocalDateTime(financialInstrumentPriceDto.timeStampUnixMili()))
+                .symbol(financialInstrumentPriceResponse.symbol())
+                .priceUSD(financialInstrumentPriceResponse.price())
+                .dateTime(transformToLocalDateTime(financialInstrumentPriceResponse.timeStampUnixMili()))
                 .build();
     }
 
@@ -21,4 +22,5 @@ public class FinancialInstrumentPriceMapper {
         Instant instant = Instant.ofEpochMilli(unixTimestampMili);
         return LocalDateTime.ofInstant(instant, ZoneId.of("UTC"));
     }
+
 }

@@ -6,35 +6,39 @@ import lombok.extern.log4j.Log4j2;
 import okhttp3.WebSocket;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 @Component
 @AllArgsConstructor
 @Log4j2
 class FinnHubApiSubscriptionEventListener {
 
-//    private final WebSocket webSocket;
-//
-//    private final static ObjectMapper jsonMapper = new ObjectMapper();
-//
-//    @EventListener
-//    void onSubscriptionStateChangeEvent(FinancialInstrumentSubscriptionStateChangedEvent event) {
-//        switch (event.getAction()) {
-//            case SUBSCRIBED -> prepareAndSendMessage(webSocket, event, FinnHubMessageType.SUBSCRIBE);
-//            case UNSUBSCRIBED -> prepareAndSendMessage(webSocket, event, FinnHubMessageType.UNSUBSCRIBE);
-//        }
-//    }
-//
-//    private void prepareAndSendMessage(WebSocket webSocket, FinancialInstrumentSubscriptionStateChangedEvent event, FinnHubMessageType messageType) {
-//        FinnHubMessageRequestDto messageRequestDto = FinnHubMessageRequestDto.builder()
-//                .type(messageType.getMessageType())
-//                .symbol(event.getFinancialInstrument().symbol())
-//                .build();
-//        try {
-//            webSocket.send(jsonMapper.writeValueAsString(messageRequestDto));
-//            log.info("Sent message to FinnHub API {} as reaction to event {}", messageRequestDto, event);
-//        } catch (JsonProcessingException jpe) {
-//            throw new FinnHubApiClientRuntimeException("Exception while serializing to json: " + jpe.getMessage());
-//        }
-//    }
+    private final WebSocket finnHubWebSocketClient;
+
+    private final static ObjectMapper jsonMapper = new ObjectMapper();
+
+    @EventListener
+    void onSubscriptionStateChangeEvent(FinancialInstrumentSubscriptionStateChangedEvent event) {
+        switch (event.getAction()) {
+            case SUBSCRIBED -> prepareAndSendMessage(finnHubWebSocketClient, event, FinnHubMessageType.SUBSCRIBE);
+            case UNSUBSCRIBED -> prepareAndSendMessage(finnHubWebSocketClient, event, FinnHubMessageType.UNSUBSCRIBE);
+        }
+    }
+
+    private void prepareAndSendMessage(WebSocket webSocket,
+                                       FinancialInstrumentSubscriptionStateChangedEvent event,
+                                       FinnHubMessageType messageType) {
+        FinnHubMessageRequest messageRequestDto = FinnHubMessageRequest.builder()
+                .type(messageType.getMessageType())
+                .symbol(event.getFinancialInstrument().symbol())
+                .build();
+        try {
+            webSocket.send(jsonMapper.writeValueAsString(messageRequestDto));
+            log.info("Sent message to FinnHub API {} as reaction to event {}", messageRequestDto, event);
+        } catch (JacksonException exception) {
+            throw new FinnHubApiClientRuntimeException("Exception while serializing to json: " + exception.getMessage());
+        }
+    }
 
 }
