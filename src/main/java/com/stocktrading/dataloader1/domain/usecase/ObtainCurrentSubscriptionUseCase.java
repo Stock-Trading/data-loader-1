@@ -41,14 +41,14 @@ public class ObtainCurrentSubscriptionUseCase {
         List<FinancialInstrumentModel> oldFIs = financialInstrumentRepository.findAll();
         List<FinancialInstrumentModel> latestFIs = latestSubscription.financialInstrumentModelList();
 
-        latestFIs.stream()
-                .filter(fi -> !oldFIs.contains(fi))
-                .forEach(financialInstrumentService::subscribeToTheInstrument);
-
         oldFIs.stream()
                 .filter(fi -> !latestFIs.contains(fi))
                 .forEach(fi -> financialInstrumentService.unsubscribeFromTheInstrumentBySymbol(
                         fi.symbol()));
+
+        latestFIs.stream()
+                .filter(fi -> !oldFIs.contains(fi))
+                .forEach(financialInstrumentService::subscribeToTheInstrument);
     }
 
 }
