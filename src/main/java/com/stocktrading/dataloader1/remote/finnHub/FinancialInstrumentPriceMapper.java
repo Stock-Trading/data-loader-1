@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.math.BigDecimal;
 
 @Component
 public class FinancialInstrumentPriceMapper {
@@ -13,7 +14,7 @@ public class FinancialInstrumentPriceMapper {
     FinancialInstrumentPriceModel mapToModel(FinancialInstrumentPriceResponse financialInstrumentPriceResponse) {
         return FinancialInstrumentPriceModel.builder()
                 .symbol(financialInstrumentPriceResponse.symbol())
-                .priceUSD(financialInstrumentPriceResponse.price())
+                .priceUSD(BigDecimal.valueOf(financialInstrumentPriceResponse.price()))
                 .dateTime(transformToLocalDateTime(financialInstrumentPriceResponse.timeStampUnixMili()))
                 .build();
     }
