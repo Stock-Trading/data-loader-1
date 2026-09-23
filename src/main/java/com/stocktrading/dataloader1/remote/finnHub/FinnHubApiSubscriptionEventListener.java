@@ -34,7 +34,10 @@ class FinnHubApiSubscriptionEventListener {
                 .symbol(event.getFinancialInstrument().symbol())
                 .build();
         try {
-            webSocket.send(jsonMapper.writeValueAsString(messageRequestDto));
+            String message = jsonMapper.writeValueAsString(messageRequestDto);
+            if (!webSocket.send(message)) {
+                throw new FinnHubApiClientRuntimeException("FinnHub WebSocket rejected message: " + messageRequestDto);
+            }
             log.info("Sent message to FinnHub API {} as reaction to event {}", messageRequestDto, event);
         } catch (JacksonException exception) {
             throw new FinnHubApiClientRuntimeException("Exception while serializing to json: " + exception.getMessage());
