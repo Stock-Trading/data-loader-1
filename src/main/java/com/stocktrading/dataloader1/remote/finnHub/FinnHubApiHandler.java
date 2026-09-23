@@ -25,7 +25,7 @@ public class FinnHubApiHandler extends WebSocketListener {
     private final FinancialInstrumentService financialInstrumentService;
     private final ApplicationEventPublisher eventPublisher;
 
-    private final static ObjectMapper jsonMapper = new ObjectMapper();
+    private final ObjectMapper jsonMapper;
 
     @Override
     public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
