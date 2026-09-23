@@ -52,21 +52,21 @@ class SubscriptionManagerClientService implements SubscriptionManagerClient {
 
     @Override
     public SubscriptionModel getSubscription() {
-        ResponseEntity<SubscriptionDto> response = restClient.subscriptionManagerSimpleRestClient()
+        ResponseEntity<SubscriptionResponseDto> response = restClient.subscriptionManagerSimpleRestClient()
                 .get()
                 .uri("http://localhost:8080/api/v1/internal/subscription/" + dataLoaderModel.getUuid())
                 .retrieve()
-                .toEntity(SubscriptionDto.class);
+                .toEntity(SubscriptionResponseDto.class);
 
-        SubscriptionDto subscriptionDto = response.getBody();
+        SubscriptionResponseDto subscriptionResponseDto = response.getBody();
         log.debug("Response status in getSubscription: {}", response.getStatusCode());
-        validateDataLoaderUuid(subscriptionDto);
-        return mapper.mapToModel(subscriptionDto);
+        validateDataLoaderUuid(subscriptionResponseDto);
+        return mapper.mapToModel(subscriptionResponseDto);
     }
 
-    private void validateDataLoaderUuid(SubscriptionDto subscriptionDto) {
-        if (!subscriptionDto.dataLoaderUuid().equals(dataLoaderModel.getUuid())){
-            throw new RuntimeException("Validation of Data Loader UUID failed! Received in response: " + subscriptionDto.dataLoaderUuid() +
+    private void validateDataLoaderUuid(SubscriptionResponseDto subscriptionResponseDto) {
+        if (!subscriptionResponseDto.dataLoaderUuid().equals(dataLoaderModel.getUuid())){
+            throw new RuntimeException("Validation of Data Loader UUID failed! Received in response: " + subscriptionResponseDto.dataLoaderUuid() +
                     ", actual UUID of this instance of Data Loader" + dataLoaderModel.getUuid());
         }
     }

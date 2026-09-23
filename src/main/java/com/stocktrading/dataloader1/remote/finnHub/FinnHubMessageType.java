@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum FinnHubMessageType {
+enum FinnHubMessageType {
 
     PING("ping"),
     PONG("pong"),

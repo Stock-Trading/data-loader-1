@@ -21,7 +21,7 @@ class DataLoaderMapper {
                 .build();
     }
 
-    SubscriptionModel mapToModel(SubscriptionDto dto) {
+    SubscriptionModel mapToModel(SubscriptionResponseDto dto) {
         return SubscriptionModel.builder()
                 .financialInstrumentModelList(dto.financialInstrumentResponseDtoList()
                         .stream()

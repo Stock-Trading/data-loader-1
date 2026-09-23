@@ -11,7 +11,7 @@ import java.time.Instant;
 @Table(name = "financial_instruments")
 @Data
 @Builder
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = {"id", "createdOn"})
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
