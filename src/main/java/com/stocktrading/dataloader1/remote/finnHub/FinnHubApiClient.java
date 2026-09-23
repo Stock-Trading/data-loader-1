@@ -28,9 +28,8 @@ public class FinnHubApiClient {
 
     private String buildUrl() {
         StringBuilder url = new StringBuilder();
-//        url.append("wss://ws.finnhub.io?token=")
-//                .append(remoteSecretsManagerClient.getFirstFinnHubApiKey());
-        url.append("ws://localhost:8765");
+        url.append("wss://ws.finnhub.io?token=")
+                .append(remoteSecretsManagerClient.getFirstFinnHubApiKey());
         return url.toString();
     }
 
