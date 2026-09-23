@@ -16,7 +16,7 @@ class FinnHubApiSubscriptionEventListener {
 
     private final WebSocket finnHubWebSocketClient;
 
-    private final static ObjectMapper jsonMapper = new ObjectMapper();
+    private final ObjectMapper jsonMapper;
 
     @EventListener
     void onSubscriptionStateChangeEvent(FinancialInstrumentSubscriptionStateChangedEvent event) {

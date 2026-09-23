@@ -1,6 +1,7 @@
 package com.stocktrading.dataloader1.remote.secretManager;
 
 import com.stocktrading.dataloader1.domain.ports.RemoteSecretsManagerClient;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
@@ -11,10 +12,13 @@ import tools.jackson.databind.ObjectMapper;
 
 @Component
 @Log4j2
+@AllArgsConstructor
 class AwsSecretsManagerClient implements RemoteSecretsManagerClient {
 
     private static final String FINN_HUB_API_KEY_ONE_AWS_SECRET_NAME = "FinnHubApiKeyOne";
     private static final String FINN_HUB_API_KEY_ONE_AWS_SECRET_KEY = "finnHubApiKeyOne";
+
+    private final ObjectMapper objectMapper;
 
     @Override
     public String getFirstFinnHubApiKey() {
@@ -36,7 +40,6 @@ class AwsSecretsManagerClient implements RemoteSecretsManagerClient {
     }
 
     private String getSecretFromKeyValueJsonPair(String keyValueJsonPair, String secretDescription) {
-        ObjectMapper objectMapper = new ObjectMapper();
         JsonNode node = objectMapper.readTree(keyValueJsonPair);
         return node.get(secretDescription).asText();
     }
