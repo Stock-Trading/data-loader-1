@@ -72,8 +72,8 @@ public class FinnHubApiHandler extends WebSocketListener {
 
     @Override
     public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, @Nullable Response response) {
-        log.error("FinnHub WS client: failure connecting to {}. Response:{}. Throwable: {} message: {}",
-                webSocket, response, t, t.getMessage());
+        log.error("FinnHub WS client: connection failure. HTTP status: {}",
+                response == null ? null : response.code(), t);
     }
 
     private List<String> getListOfInstrumentSymbolsAsJsonsToSubscribeOnStartup() {
