@@ -29,7 +29,7 @@ public class FinnHubApiHandler extends WebSocketListener {
 
     @Override
     public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
-        log.info("Received message from server: {}", text);
+        log.debug("FinnHub WS client: received message: {}", text);
         try {
             if (text.equals("{\"type\":\"ping\"}")) {
                 String pong = "{\"type\":\"pong\"}";
@@ -41,11 +41,13 @@ public class FinnHubApiHandler extends WebSocketListener {
                         .stream()
                         .map(mapper::mapToModel)
                         .toList();
-                FinancialInstrumentPriceReceivedEvent financialInstrumentPriceReceivedEvent = new FinancialInstrumentPriceReceivedEvent(FinnHubApiHandler.class, financialInstrumentPriceModelList);
+                FinancialInstrumentPriceReceivedEvent financialInstrumentPriceReceivedEvent =
+                        new FinancialInstrumentPriceReceivedEvent(FinnHubApiHandler.class,
+                                financialInstrumentPriceModelList);
                 eventPublisher.publishEvent(financialInstrumentPriceReceivedEvent);
             }
         } catch (Exception e) {
-            log.error("Caught exception: {}", e.getMessage());
+            log.error("FinnHub WS client: caught {} on message: {}", e.getClass(), e.getMessage());
         }
     }
 
@@ -54,29 +56,30 @@ public class FinnHubApiHandler extends WebSocketListener {
         List<String> listOfInstrumentSymbols = getListOfInstrumentSymbolsAsJsonsToSubscribeOnStartup();
         listOfInstrumentSymbols.forEach(request -> {
             webSocket.send(request);
-            log.info("Sent message on FinnHub connection opening: {}", request);
+            log.info("FinnHub WS client: sent message on connection opening: {}", request);
         });
     }
 
     @Override
     public void onClosed(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
-        log.info("Closed connection to: {} code: {}", webSocket, code);
+        log.info("FinnHub WS client: server closed connection to {} code: {}, reason {}", webSocket, code, reason);
     }
 
     @Override
     public void onClosing(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
-        log.info("Closing connection to: {} code: {}", webSocket, code);
+        log.info("FinnHub WS client: closing connection to: {} code: {}, reason {}", webSocket, code, reason);
     }
 
     @Override
     public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, @Nullable Response response) {
-        log.error("Failure connecting to {}. Response:{}. Throwable: {}", webSocket, response, t);
+        log.error("FinnHub WS client: connection failure. HTTP status: {}",
+                response == null ? null : response.code(), t);
     }
 
     private List<String> getListOfInstrumentSymbolsAsJsonsToSubscribeOnStartup() {
         List<String> listOfSymbols = financialInstrumentService.getAllSymbolsOfCurrentlySubscribed();
         return listOfSymbols.stream()
-                .map(symbol -> FinnHubMessageRequestDto.builder()
+                .map(symbol -> FinnHubMessageRequest.builder()
                         .type(FinnHubMessageType.SUBSCRIBE.getMessageType())
                         .symbol(symbol)
                         .build())
@@ -89,4 +92,5 @@ public class FinnHubApiHandler extends WebSocketListener {
                 })
                 .toList();
     }
+
 }
