@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remote.kafkaEventPublisher;
+package com.stocktrading.dataloader1.remote.kafkaeventpublisher;
 
 public class EventPublishingRuntimeException extends RuntimeException {
 

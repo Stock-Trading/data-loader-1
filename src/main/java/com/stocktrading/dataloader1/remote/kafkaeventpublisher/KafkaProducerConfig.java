@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remote.kafkaEventPublisher;
+package com.stocktrading.dataloader1.remote.kafkaeventpublisher;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

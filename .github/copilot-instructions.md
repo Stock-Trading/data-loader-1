@@ -31,10 +31,10 @@ Adapters:
 - `data` — JPA persistence adapter (`FinancialInstrumentEntity`, `FinancialInstrumentJpaRepository`,
   `FinancialInstrumentRepositoryImpl`), implements `FinancialInstrumentRepository`.
 - `remote.subscriptionmanager` — REST client implementing `SubscriptionManagerClient`.
-- `remote.finnHub` — OkHttp WebSocket client/handler subscribing to live trade updates from FinnHub.
-- `remote.kafkaEventPublisher` — publishes unified price events to Kafka.
-- `remote.secretManager` — AWS Secrets Manager integration for API keys (`RemoteSecretsManagerClient`).
-- `remote.restApi` — local REST API (see below).
+- `remote.finnhub` — OkHttp WebSocket client/handler subscribing to live trade updates from FinnHub.
+- `remote.kafkaeventpublisher` — publishes unified price events to Kafka.
+- `remote.secretmanager` — AWS Secrets Manager integration for API keys (`RemoteSecretsManagerClient`).
+- `remote.restapi` — local REST API (see below).
 
 # Conventions
 - Each package that crosses a layer boundary (`remote.*`) typically has its own package-private DTOs
@@ -46,13 +46,13 @@ Adapters:
   `ModelNotFoundException`) rather than throwing generic `RuntimeException`. Prefer this pattern for new code
   even where existing code (e.g. `SubscriptionManagerClientService`) hasn't been updated yet.
 - Domain-level exceptions are translated to HTTP responses via `@RestControllerAdvice`
-  (`GlobalExceptionHandler` in `remote.restApi`).
+  (`GlobalExceptionHandler` in `remote.restapi`).
 - Most classes/methods in adapter packages are package-private by default unless they need to be exposed
   (e.g. implement a `domain.ports` interface or are Spring `@Bean`/`@Configuration` classes).
 - Logging: `@Slf4j` or `@Log4j2` (both appear in the codebase — either is acceptable, don't standardize
   without discussion).
 
-# About the `restApi` package
+# About the `restapi` package
 
 This module exposes a local REST API (`/api/v1/financialInstrument`) with full CRUD-style endpoints
 (get/subscribe/unsubscribe by id, name or symbol), backed by a PostgreSQL-persisted `FinancialInstrumentEntity`.

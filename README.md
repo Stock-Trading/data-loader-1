@@ -37,10 +37,10 @@ The codebase follows a loose hexagonal / ports-and-adapters style:
   - `event` / `exception` — domain events and exceptions
 - `remote` — adapters implementing the ports above
   - `subscriptionmanager` — REST client that registers/checks in with the Subscription Manager and fetches the current subscription
-  - `finnHub` — WebSocket client/handler talking to the FinnHub API
-  - `kafkaEventPublisher` — publishes unified price events to Kafka
-  - `restApi` — local REST API + JPA persistence for subscribed financial instruments (see below)
-  - `secretManager` — integration with AWS Secrets Manager for API keys
+  - `finnhub` — WebSocket client/handler talking to the FinnHub API
+  - `kafkaeventpublisher` — publishes unified price events to Kafka
+  - `restapi` — local REST API + JPA persistence for subscribed financial instruments (see below)
+  - `secretmanager` — integration with AWS Secrets Manager for API keys
 - `data` — JPA entities/repositories backing the persistence layer
 
 ## Tech stack
@@ -65,7 +65,7 @@ The codebase follows a loose hexagonal / ports-and-adapters style:
    ./mvnw spring-boot:run
    ```
 
-## About the `restApi` package
+## About the `restapi` package
 
 This module exposes a local REST API (`/api/v1/financialInstrument`) with full CRUD-style endpoints
 (get/subscribe/unsubscribe by id, name or symbol), backed by a PostgreSQL-persisted `FinancialInstrumentEntity`.

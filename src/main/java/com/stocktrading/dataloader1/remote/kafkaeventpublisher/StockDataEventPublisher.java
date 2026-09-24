@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remote.kafkaEventPublisher;
+package com.stocktrading.dataloader1.remote.kafkaeventpublisher;
 
 import com.stocktrading.dataloader1.domain.ports.KafkaEventPublisher;
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;

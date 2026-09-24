@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remote.restApi;
+package com.stocktrading.dataloader1.remote.restapi;
 
 import com.stocktrading.dataloader1.domain.exception.AlreadySubscribedException;
 import com.stocktrading.dataloader1.domain.exception.ModelNotFoundException;
