@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remote.finnHub;
+package com.stocktrading.dataloader1.remote.finnhub;
 
 import com.stocktrading.dataloader1.domain.ports.RemoteSecretsManagerClient;
 import lombok.AllArgsConstructor;

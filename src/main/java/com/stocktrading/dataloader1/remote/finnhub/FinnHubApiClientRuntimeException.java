@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remote.finnHub;
+package com.stocktrading.dataloader1.remote.finnhub;
 
 public class FinnHubApiClientRuntimeException extends RuntimeException {
 

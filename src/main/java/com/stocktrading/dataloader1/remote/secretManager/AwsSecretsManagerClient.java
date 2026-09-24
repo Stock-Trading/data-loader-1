@@ -25,10 +25,11 @@ class AwsSecretsManagerClient implements RemoteSecretsManagerClient {
         log.info("Obtaining first FinnHub API Key from AWS Secret Manager");
         try (SecretsManagerClient client = SecretsManagerClient.create()) {
             GetSecretValueRequest getSecretValueRequest = GetSecretValueRequest.builder()
-                    .secretId(FINN_HUB_API_KEY_ONE_AWS_SECRET_NAME)
+                    .secretId("FinnHubApiKeys")
                     .build();
 
             GetSecretValueResponse getSecretValueResponse = client.getSecretValue(getSecretValueRequest);
+            log.info("Full response from Secret Manager {}", getSecretValueResponse);
             String secretValue = getSecretFromKeyValueJsonPair(getSecretValueResponse.secretString(), FINN_HUB_API_KEY_ONE_AWS_SECRET_KEY);
             log.info("Successfully obtained first FinnHub API Key from AWS Secret Manager");
             return secretValue;
@@ -41,6 +42,7 @@ class AwsSecretsManagerClient implements RemoteSecretsManagerClient {
 
     private String getSecretFromKeyValueJsonPair(String keyValueJsonPair, String secretDescription) {
         JsonNode node = objectMapper.readTree(keyValueJsonPair);
-        return node.get(secretDescription).asText();
+        return node.get(secretDescription).asString();
     }
+
 }
