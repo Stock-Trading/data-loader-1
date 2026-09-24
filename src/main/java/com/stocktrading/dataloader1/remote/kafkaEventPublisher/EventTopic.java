@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remote.kafkaEventPublisher;
+package com.stocktrading.dataloader1.remote.kafkaeventpublisher;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

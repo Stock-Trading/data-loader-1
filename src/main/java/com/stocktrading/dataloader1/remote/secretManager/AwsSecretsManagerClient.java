@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.remote.secretManager;
+package com.stocktrading.dataloader1.remote.secretmanager;
 
 import com.stocktrading.dataloader1.domain.ports.RemoteSecretsManagerClient;
 import lombok.AllArgsConstructor;
