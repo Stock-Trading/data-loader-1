@@ -2,97 +2,90 @@ package com.stocktrading.dataloader1.data;
 
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentModel;
 import com.stocktrading.dataloader1.domain.ports.FinancialInstrumentRepository;
-import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
-@AllArgsConstructor
 public class FinancialInstrumentRepositoryImpl implements FinancialInstrumentRepository {
 
-    private final FinancialInstrumentJpaRepository jpaRepository;
-    private final DataMapper mapper;
+    private final Map<Long, FinancialInstrumentModel> instruments = new LinkedHashMap<>();
+    private long nextId = 1;
 
     @Override
-    public Optional<FinancialInstrumentModel> findById(Long id) {
-        try {
-            FinancialInstrumentEntity entity = jpaRepository.getReferenceById(id);
-            return Optional.of(mapper.mapToModel(entity));
-        } catch (EntityNotFoundException entityNotFoundException) {
-            return Optional.empty();
-        }
+    public synchronized Optional<FinancialInstrumentModel> findById(Long id) {
+        return Optional.ofNullable(instruments.get(id));
     }
 
     @Override
-    public Optional<FinancialInstrumentModel> findByName(String name) {
-        try {
-            FinancialInstrumentEntity entity = jpaRepository.getByName(name);
-            return Optional.of(mapper.mapToModel(entity));
-        } catch (EntityNotFoundException entityNotFoundException) {
-            return Optional.empty();
-        }
+    public synchronized Optional<FinancialInstrumentModel> findByName(String name) {
+        return instruments.values().stream()
+                .filter(model -> model.name().equals(name))
+                .findFirst();
     }
 
     @Override
-    public Optional<FinancialInstrumentModel> findBySymbol(String symbol) {
-        try {
-            FinancialInstrumentEntity entity = jpaRepository.getBySymbol(symbol);
-            return Optional.of(mapper.mapToModel(entity));
-        } catch (EntityNotFoundException entityNotFoundException) {
-            return Optional.empty();
-        }
+    public synchronized Optional<FinancialInstrumentModel> findBySymbol(String symbol) {
+        return instruments.values().stream()
+                .filter(model -> model.symbol().equals(symbol))
+                .findFirst();
     }
 
     @Override
-    public List<FinancialInstrumentModel> findAll() {
-        return jpaRepository.findAll()
-                .stream()
-                .map(mapper::mapToModel)
+    public synchronized List<FinancialInstrumentModel> findAll() {
+        return List.copyOf(instruments.values());
+    }
+
+    @Override
+    public synchronized List<String> findAllSymbols() {
+        return instruments.values().stream()
+                .map(FinancialInstrumentModel::symbol)
                 .toList();
     }
 
     @Override
-    public List<String> findAllSymbols() {
-        return jpaRepository.getAllSymbols();
+    public synchronized FinancialInstrumentModel save(FinancialInstrumentModel model) {
+        FinancialInstrumentModel toSave = model.id() != null && instruments.containsKey(model.id())
+                ? model
+                : FinancialInstrumentModel.builder()
+                        .id(nextId++)
+                        .name(model.name())
+                        .symbol(model.symbol())
+                        .build();
+        instruments.put(toSave.id(), toSave);
+        return toSave;
     }
 
     @Override
-    public FinancialInstrumentModel save(FinancialInstrumentModel model) {
-        FinancialInstrumentEntity entity = mapper.mapToEntity(model);
-        FinancialInstrumentEntity savedEntity = jpaRepository.save(entity);
-        return mapper.mapToModel(savedEntity);
+    public synchronized void deleteById(Long id) {
+        instruments.remove(id);
     }
 
     @Override
-    public void deleteById(Long id) {
-        jpaRepository.deleteById(id);
+    public synchronized void deleteByName(String name) {
+        instruments.values().removeIf(model -> model.name().equals(name));
     }
 
     @Override
-    public void deleteByName(String name) {
-        jpaRepository.deleteByName(name);
+    public synchronized void deleteBySymbol(String symbol) {
+        instruments.values().removeIf(model -> model.symbol().equals(symbol));
     }
 
     @Override
-    public void deleteBySymbol(String symbol) {
-        jpaRepository.deleteBySymbol(symbol);
+    public synchronized boolean existsById(Long id) {
+        return instruments.containsKey(id);
     }
 
     @Override
-    public boolean existsById(Long id) {
-        return jpaRepository.existsById(id);
+    public synchronized boolean existsByName(String name) {
+        return findByName(name).isPresent();
     }
 
     @Override
-    public boolean existsByName(String name) {
-        return jpaRepository.existsByName(name);
-    }
-
-    @Override
-    public boolean existsBySymbol(String symbol) {
-        return jpaRepository.existsBySymbol(symbol);
+    public synchronized boolean existsBySymbol(String symbol) {
+        return findBySymbol(symbol).isPresent();
     }
 }

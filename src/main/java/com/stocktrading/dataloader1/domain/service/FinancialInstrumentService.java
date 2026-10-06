@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -55,7 +54,6 @@ public class FinancialInstrumentService {
         return instrumentToSubscribedTo;
     }
 
-    @Transactional
     public FinancialInstrumentModel unsubscribeFromTheInstrumentById(Long id) {
         FinancialInstrumentModel instrumentToUnsubscribeFrom = repository.findById(id).orElseThrow(ModelNotFoundException::new);
         repository.deleteById(id);
@@ -65,7 +63,6 @@ public class FinancialInstrumentService {
         return instrumentToUnsubscribeFrom;
     }
 
-    @Transactional
     public FinancialInstrumentModel unsubscribeFromTheInstrumentByName(String name) {
         FinancialInstrumentModel instrumentToUnsubscribeFrom = repository.findByName(name).orElseThrow(ModelNotFoundException::new);
         repository.deleteByName(name);
@@ -75,7 +72,6 @@ public class FinancialInstrumentService {
         return instrumentToUnsubscribeFrom;
     }
 
-    @Transactional
     public FinancialInstrumentModel unsubscribeFromTheInstrumentBySymbol(String symbol) {
         FinancialInstrumentModel instrumentToUnsubscribeFrom = repository.findBySymbol(symbol).orElseThrow(ModelNotFoundException::new);
         repository.deleteBySymbol(symbol);
