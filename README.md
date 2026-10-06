@@ -39,28 +39,23 @@ The codebase follows a loose hexagonal / ports-and-adapters style:
   - `subscriptionmanager` — REST client that registers/checks in with the Subscription Manager and fetches the current subscription
   - `finnhub` — WebSocket client/handler talking to the FinnHub API
   - `kafkaeventpublisher` — publishes unified price events to Kafka
-  - `restapi` — local REST API + JPA persistence for subscribed financial instruments (see below)
+  - `restapi` — local REST API for subscribed financial instruments (see below)
   - `secretmanager` — integration with AWS Secrets Manager for API keys
-- `data` — JPA entities/repositories backing the persistence layer
+- `data` — in-memory repository holding the currently subscribed financial instruments (not persisted between runs)
 
 ## Tech stack
 
 - Java 25
 - Spring Boot 4.1
 - Spring Kafka
-- Spring Data JPA + PostgreSQL
-- OkHttp (WebSocket client for FinnHub)
+- - OkHttp (WebSocket client for FinnHub)
 - AWS Secrets Manager SDK
 - Lombok, Jackson
 
 ## Running locally
 
-1. Start supporting infrastructure (PostgreSQL) with Docker Compose:
-   ```
-   docker-compose up -d
-   ```
-2. Make sure a local Kafka broker is running and reachable at `localhost:9092`.
-3. Run the application (default port `8081`):
+1. Make sure a local Kafka broker is running and reachable at `localhost:9092`.
+2. Run the application (default port `8081`):
    ```
    ./mvnw spring-boot:run
    ```
@@ -68,7 +63,7 @@ The codebase follows a loose hexagonal / ports-and-adapters style:
 ## About the `restapi` package
 
 This module exposes a local REST API (`/api/v1/financialInstrument`) with full CRUD-style endpoints
-(get/subscribe/unsubscribe by id, name or symbol), backed by a PostgreSQL-persisted `FinancialInstrumentEntity`.
+(get/subscribe/unsubscribe by id, name or symbol), backed by an in-memory store of subscribed instruments.
 
 This predates (and slightly overlaps with) the Subscription Manager integration — it looks like it was an early,
 self-contained way to manage which instruments this loader subscribes to, before subscription responsibility was
@@ -80,7 +75,7 @@ moved to a dedicated external service. Some ideas for what to do with it now:
 - **Admin/ops API**: turn it into an internal admin endpoint for manually forcing a subscribe/unsubscribe or
   inspecting current WebSocket subscriptions, useful for troubleshooting a running instance.
 - **Retire it**: if the Subscription Manager is now the single source of truth for subscriptions, this package
-  (and the `FinancialInstrumentEntity`/JPA layer) could be removed to reduce duplicated responsibility, and
+  could be removed to reduce duplicated responsibility, and
   replaced by an in-memory representation of the current subscription.
 - **Historical price storage**: repurpose the persistence layer to store incoming price ticks
   (`FinancialInstrumentPriceModel`) for auditing/backfill, exposing them through the existing REST API instead of
