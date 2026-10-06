@@ -39,14 +39,14 @@ public class ObtainCurrentSubscriptionUseCase {
     /// compares latest subscription (not yet subscribed) with the current one
     private void checkForChange(SubscriptionModel latestSubscription) {
         List<FinancialInstrumentModel> oldFIs = financialInstrumentRepository.findAll();
-        List<FinancialInstrumentModel> latestFIs = latestSubscription.financialInstrumentModelList();
+        List<FinancialInstrumentModel> newFIs = latestSubscription.financialInstrumentModelList();
 
         oldFIs.stream()
-                .filter(fi -> !latestFIs.contains(fi))
+                .filter(fi -> !newFIs.contains(fi))
                 .forEach(fi -> financialInstrumentService.unsubscribeFromTheInstrumentBySymbol(
                         fi.symbol()));
 
-        latestFIs.stream()
+        newFIs.stream()
                 .filter(fi -> !oldFIs.contains(fi))
                 .forEach(financialInstrumentService::subscribeToTheInstrument);
     }
