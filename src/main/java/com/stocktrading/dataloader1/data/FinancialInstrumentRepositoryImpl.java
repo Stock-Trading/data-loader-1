@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -23,14 +24,14 @@ public class FinancialInstrumentRepositoryImpl implements FinancialInstrumentRep
     @Override
     public synchronized Optional<FinancialInstrumentModel> findByName(String name) {
         return instruments.values().stream()
-                .filter(model -> model.name().equals(name))
+                .filter(model -> Objects.equals(model.name(), name))
                 .findFirst();
     }
 
     @Override
     public synchronized Optional<FinancialInstrumentModel> findBySymbol(String symbol) {
         return instruments.values().stream()
-                .filter(model -> model.symbol().equals(symbol))
+                .filter(model -> Objects.equals(model.symbol(), symbol))
                 .findFirst();
     }
 
@@ -66,12 +67,12 @@ public class FinancialInstrumentRepositoryImpl implements FinancialInstrumentRep
 
     @Override
     public synchronized void deleteByName(String name) {
-        instruments.values().removeIf(model -> model.name().equals(name));
+        instruments.values().removeIf(model -> Objects.equals(model.name(), name));
     }
 
     @Override
     public synchronized void deleteBySymbol(String symbol) {
-        instruments.values().removeIf(model -> model.symbol().equals(symbol));
+        instruments.values().removeIf(model -> Objects.equals(model.symbol(), symbol));
     }
 
     @Override

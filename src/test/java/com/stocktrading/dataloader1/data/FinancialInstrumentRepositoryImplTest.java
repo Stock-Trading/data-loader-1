@@ -66,4 +66,32 @@ class FinancialInstrumentRepositoryImplTest {
         // then
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    @DisplayName("""
+            given an instrument with missing name and symbol,
+            when looking up and deleting instruments by name and symbol,
+            then it should handle the missing fields without throwing
+            """)
+    void shouldHandleMissingNameAndSymbol() {
+        // given
+        repository.save(FinancialInstrumentModel.builder().name("Apple").symbol("AAPL").build());
+        repository.save(FinancialInstrumentModel.builder().build());
+        repository.save(FinancialInstrumentModel.builder().name("Microsoft").symbol("MSFT").build());
+
+        // when
+        var byName = repository.findByName("Microsoft");
+        var bySymbol = repository.findBySymbol("MSFT");
+        repository.deleteByName("Apple");
+        repository.deleteBySymbol("MSFT");
+
+        // then
+        assertEquals("Microsoft", byName.orElseThrow().name());
+        assertEquals("MSFT", bySymbol.orElseThrow().symbol());
+        assertTrue(repository.findByName("Apple").isEmpty());
+        assertTrue(repository.findBySymbol("MSFT").isEmpty());
+        assertEquals(1, repository.findAll().size());
+        assertNull(repository.findAll().getFirst().name());
+        assertNull(repository.findAll().getFirst().symbol());
+    }
 }
