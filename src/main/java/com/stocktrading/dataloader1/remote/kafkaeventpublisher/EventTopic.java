@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum EventTopic {
+enum EventTopic {
 
-    STOCK_INFO ("stockInfo");
+    STOCK_INFO("stockInfo");
 
     private final String topicName;
 

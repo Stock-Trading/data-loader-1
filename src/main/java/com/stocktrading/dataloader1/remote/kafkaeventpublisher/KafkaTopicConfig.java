@@ -6,11 +6,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
-public class KafkaTopicConfig {
+class KafkaTopicConfig {
 
     @Bean
-    public NewTopic stockTopicFactory() {
-        return TopicBuilder.name(EventTopic.STOCK_INFO.name())
+    NewTopic stockTopicFactory() {
+        return TopicBuilder.name(EventTopic.STOCK_INFO.getTopicName())
+                .partitions(1)
                 .build();
     }
+
 }

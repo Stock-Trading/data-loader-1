@@ -32,7 +32,7 @@ The codebase follows a loose hexagonal / ports-and-adapters style:
 
 - `domain` — core business logic, independent of any framework/provider specifics
   - `model` — internal domain models (e.g. `FinancialInstrumentModel`, `FinancialInstrumentPriceModel`, `SubscriptionModel`)
-  - `ports` — interfaces the domain depends on (`SubscriptionManagerClient`, `KafkaEventPublisher`, `RemoteSecretsManagerClient`, `FinancialInstrumentRepository`)
+  - `ports` — interfaces the domain depends on (`SubscriptionManagerClient`, `EventPublisher`, `RemoteSecretsManagerClient`, `FinancialInstrumentRepository`)
   - `service` — application services orchestrating use cases (`FinancialInstrumentService`, `DataLoaderService`)
   - `event` / `exception` — domain events and exceptions
 - `remote` — adapters implementing the ports above

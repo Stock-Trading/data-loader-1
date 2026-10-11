@@ -1,41 +1,50 @@
 package com.stocktrading.dataloader1.remote.kafkaeventpublisher;
 
-import com.stocktrading.dataloader1.domain.ports.KafkaEventPublisher;
-import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
 import com.stocktrading.dataloader1.domain.event.FinancialInstrumentPriceReceivedEvent;
-import lombok.AllArgsConstructor;
+import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
+import com.stocktrading.dataloader1.domain.ports.EventPublisher;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.event.EventListener;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
-@AllArgsConstructor
-@Log4j2
-public class StockDataEventPublisher implements KafkaEventPublisher {
+import static com.stocktrading.dataloader1.remote.kafkaeventpublisher.EventTopic.STOCK_INFO;
 
-//    private KafkaTemplate<String, TimeSeriesDaily> kafkaTemplate;
+@Component
+@Log4j2
+class StockDataEventPublisher implements EventPublisher {
+
+    private final KafkaTemplate<String, FinancialInstrumentPriceModel> kafkaTemplate;
+
+    StockDataEventPublisher(KafkaTemplate<String, FinancialInstrumentPriceModel> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     @EventListener
-    public void handleFinancialInstrumentPriceReceivedEvent(FinancialInstrumentPriceReceivedEvent event) {
-        publishFinancialInstrumentPriceInfoEvent(event.getFinancialInstrumentPriceModelList());
+    @Async
+    void handleFinancialInstrumentPriceReceivedEvent(FinancialInstrumentPriceReceivedEvent event) {
+        List<FinancialInstrumentPriceModel> list = event.getFinancialInstrumentPriceModelList();
+        list.forEach(this::publishFinancialInstrumentPriceInfoEvent);
     }
 
     @Override
-    public void publishFinancialInstrumentPriceInfoEvent(List<FinancialInstrumentPriceModel> financialInstrumentPriceModelList) {
-//        EventTopic topic = STOCK_INFO;
-//        stockPriceService.publishStockPriceEvent("AAPL");
-//        try {
-//            log.info("Trying to send time series daily about \"{}\" to the topic \"{}\"", stockSymbol.toUpperCase(), topic);
-//            kafkaTemplate.send(topic.getTopicName(), timeSeriesDailyIBM);
-//            log.info("Event published to topic {}", topic);
-//        } catch (Exception e) {
-//            throw new EventPublishingRuntimeException("Exception was thrown while trying to publish an event: " + e);
-//        }
-
-        log.info("Info from kafka producer. Received stockPriceModelList" + financialInstrumentPriceModelList);
-
+    public void publishFinancialInstrumentPriceInfoEvent(FinancialInstrumentPriceModel financialInstrumentPriceModel) {
+        EventTopic topic = STOCK_INFO;
+        try {
+            kafkaTemplate.send(topic.getTopicName(), financialInstrumentPriceModel.symbol(), financialInstrumentPriceModel)
+                    .whenComplete((ignored, ex) -> {
+                        if (ex != null) {
+                            log.error("Failed to publish Kafka event to topic {} for symbol {}",
+                                    topic, financialInstrumentPriceModel.symbol(), ex);
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("Failed to publish Kafka event to topic {} for symbol {}",
+                    topic, financialInstrumentPriceModel.symbol(), e);
+        }
     }
 
 }
