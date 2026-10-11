@@ -1,6 +1,5 @@
 package com.stocktrading.dataloader1.remote.kafkaeventpublisher;
 
-import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,12 +27,12 @@ class KafkaProducerConfig {
         return properties;
     }
 
-    private ProducerFactory<String, FinancialInstrumentPriceModel> producerFactory() {
+    private ProducerFactory<String, StockPriceEventDto> producerFactory() {
         return new DefaultKafkaProducerFactory<>(getProducerConfiguration());
     }
 
     @Bean
-    KafkaTemplate<String, FinancialInstrumentPriceModel> financialInstrumentPriceModelKafkaTemplate() {
+    KafkaTemplate<String, StockPriceEventDto> financialInstrumentPriceModelKafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 

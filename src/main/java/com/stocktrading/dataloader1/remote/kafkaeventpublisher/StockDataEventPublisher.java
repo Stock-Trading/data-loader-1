@@ -18,10 +18,12 @@ import static com.stocktrading.dataloader1.remote.kafkaeventpublisher.EventTopic
 @Log4j2
 class StockDataEventPublisher implements EventPublisher {
 
-    private final KafkaTemplate<String, FinancialInstrumentPriceModel> kafkaTemplate;
+    private final KafkaTemplate<String, StockPriceEventDto> kafkaTemplate;
+    private final StockPriceEventMapper mapper;
 
-    StockDataEventPublisher(KafkaTemplate<String, FinancialInstrumentPriceModel> kafkaTemplate) {
+    StockDataEventPublisher(KafkaTemplate<String, StockPriceEventDto> kafkaTemplate, StockPriceEventMapper mapper) {
         this.kafkaTemplate = kafkaTemplate;
+        this.mapper = mapper;
     }
 
     @EventListener
@@ -41,7 +43,7 @@ class StockDataEventPublisher implements EventPublisher {
 
     private CompletableFuture<?> send(FinancialInstrumentPriceModel financialInstrumentPriceModel) {
         EventTopic topic = STOCK_INFO;
-        return kafkaTemplate.send(topic.getTopicName(), financialInstrumentPriceModel.symbol(), financialInstrumentPriceModel)
+        return kafkaTemplate.send(topic.getTopicName(), financialInstrumentPriceModel.symbol(), mapper.mapToDto(financialInstrumentPriceModel))
                 .whenComplete((ignored, ex) -> {
                     if (ex != null) {
                         log.error("Failed to publish Kafka event to topic {} for symbol {}",
