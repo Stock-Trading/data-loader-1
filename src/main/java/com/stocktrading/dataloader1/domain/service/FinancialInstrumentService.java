@@ -49,7 +49,13 @@ public class FinancialInstrumentService {
         }
         FinancialInstrumentModel instrumentToSubscribedTo = repository.save(model);
         FinancialInstrumentSubscriptionStateChangedEvent subscribeEvent = new FinancialInstrumentSubscriptionStateChangedEvent(this, FinancialInstrumentSubscriptionStateChangeType.SUBSCRIBED, instrumentToSubscribedTo);
-        eventPublisher.publishEvent(subscribeEvent);
+        try {
+            eventPublisher.publishEvent(subscribeEvent);
+        } catch (RuntimeException e) {
+            log.error("Failed to publish event {}, removing saved instrument {}", subscribeEvent, instrumentToSubscribedTo, e);
+            repository.deleteById(instrumentToSubscribedTo.id());
+            throw e;
+        }
         log.debug("Published event {}", subscribeEvent.toString());
         return instrumentToSubscribedTo;
     }
