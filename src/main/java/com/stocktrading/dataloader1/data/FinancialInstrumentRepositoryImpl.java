@@ -49,6 +49,13 @@ public class FinancialInstrumentRepositoryImpl implements FinancialInstrumentRep
 
     @Override
     public synchronized FinancialInstrumentModel save(FinancialInstrumentModel model) {
+        if (instruments.values().stream().anyMatch(existing ->
+                !existing.id().equals(model.id())
+                        && (java.util.Objects.equals(existing.name(), model.name())
+                        || java.util.Objects.equals(existing.symbol(), model.symbol())))) {
+            throw new com.stocktrading.dataloader1.domain.exception.AlreadySubscribedException(
+                    "Model with provided name or symbol is already subscribed " + model);
+        }
         FinancialInstrumentModel toSave = model.id() != null && instruments.containsKey(model.id())
                 ? model
                 : FinancialInstrumentModel.builder()
