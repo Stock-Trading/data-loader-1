@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static com.stocktrading.dataloader1.remote.kafkaeventpublisher.EventTopic.STOCK_INFO;
 
@@ -27,24 +28,26 @@ class StockDataEventPublisher implements EventPublisher {
     @Async
     void handleFinancialInstrumentPriceReceivedEvent(FinancialInstrumentPriceReceivedEvent event) {
         List<FinancialInstrumentPriceModel> list = event.getFinancialInstrumentPriceModelList();
-        list.forEach(this::publishFinancialInstrumentPriceInfoEvent);
+        CompletableFuture<?>[] futures = list.stream()
+                .map(this::send)
+                .toArray(CompletableFuture[]::new);
+        CompletableFuture.allOf(futures).join();
     }
 
     @Override
     public void publishFinancialInstrumentPriceInfoEvent(FinancialInstrumentPriceModel financialInstrumentPriceModel) {
+        send(financialInstrumentPriceModel).join();
+    }
+
+    private CompletableFuture<?> send(FinancialInstrumentPriceModel financialInstrumentPriceModel) {
         EventTopic topic = STOCK_INFO;
-        try {
-            kafkaTemplate.send(topic.getTopicName(), financialInstrumentPriceModel.symbol(), financialInstrumentPriceModel)
-                    .whenComplete((ignored, ex) -> {
-                        if (ex != null) {
-                            log.error("Failed to publish Kafka event to topic {} for symbol {}",
-                                    topic, financialInstrumentPriceModel.symbol(), ex);
-                        }
-                    });
-        } catch (Exception e) {
-            log.error("Failed to publish Kafka event to topic {} for symbol {}",
-                    topic, financialInstrumentPriceModel.symbol(), e);
-        }
+        return kafkaTemplate.send(topic.getTopicName(), financialInstrumentPriceModel.symbol(), financialInstrumentPriceModel)
+                .whenComplete((ignored, ex) -> {
+                    if (ex != null) {
+                        log.error("Failed to publish Kafka event to topic {} for symbol {}",
+                                topic, financialInstrumentPriceModel.symbol(), ex);
+                    }
+                });
     }
 
 }
