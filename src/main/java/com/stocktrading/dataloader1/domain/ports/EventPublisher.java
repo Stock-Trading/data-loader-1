@@ -5,8 +5,8 @@ import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
 
 import java.util.List;
 
-public interface KafkaEventPublisher {
+public interface EventPublisher {
 
-    void publishFinancialInstrumentPriceInfoEvent(List<FinancialInstrumentPriceModel> financialInstrumentPriceModel);
+    void publishFinancialInstrumentPriceInfoEvent(FinancialInstrumentPriceModel financialInstrumentPriceModel);
 
 }
