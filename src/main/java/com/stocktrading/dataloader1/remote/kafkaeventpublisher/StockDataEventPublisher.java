@@ -25,7 +25,7 @@ class StockDataEventPublisher implements EventPublisher {
     }
 
     @EventListener
-    @Async
+    @Async(KafkaPublisherAsyncConfig.KAFKA_PUBLISHER_EXECUTOR)
     void handleFinancialInstrumentPriceReceivedEvent(FinancialInstrumentPriceReceivedEvent event) {
         List<FinancialInstrumentPriceModel> list = event.getFinancialInstrumentPriceModelList();
         CompletableFuture<?>[] futures = list.stream()
