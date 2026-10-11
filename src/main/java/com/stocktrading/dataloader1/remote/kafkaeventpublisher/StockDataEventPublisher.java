@@ -10,7 +10,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import static com.stocktrading.dataloader1.remote.kafkaeventpublisher.EventTopic.STOCK_INFO;
 
@@ -30,20 +29,17 @@ class StockDataEventPublisher implements EventPublisher {
     @Async(KafkaPublisherAsyncConfig.KAFKA_PUBLISHER_EXECUTOR)
     void handleFinancialInstrumentPriceReceivedEvent(FinancialInstrumentPriceReceivedEvent event) {
         List<FinancialInstrumentPriceModel> list = event.getFinancialInstrumentPriceModelList();
-        CompletableFuture<?>[] futures = list.stream()
-                .map(this::send)
-                .toArray(CompletableFuture[]::new);
-        CompletableFuture.allOf(futures).join();
+        list.forEach(this::send);
     }
 
     @Override
     public void publishFinancialInstrumentPriceInfoEvent(FinancialInstrumentPriceModel financialInstrumentPriceModel) {
-        send(financialInstrumentPriceModel).join();
+        send(financialInstrumentPriceModel);
     }
 
-    private CompletableFuture<?> send(FinancialInstrumentPriceModel financialInstrumentPriceModel) {
+    private void send(FinancialInstrumentPriceModel financialInstrumentPriceModel) {
         EventTopic topic = STOCK_INFO;
-        return kafkaTemplate.send(topic.getTopicName(), financialInstrumentPriceModel.symbol(), mapper.mapToDto(financialInstrumentPriceModel))
+        kafkaTemplate.send(topic.getTopicName(), financialInstrumentPriceModel.symbol(), mapper.mapToDto(financialInstrumentPriceModel))
                 .whenComplete((ignored, ex) -> {
                     if (ex != null) {
                         log.error("Failed to publish Kafka event to topic {} for symbol {}",
