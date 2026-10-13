@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-public class FinancialInstrumentRepositoryImpl implements FinancialInstrumentRepository {
+class FinancialInstrumentRepositoryImpl implements FinancialInstrumentRepository {
 
     private final Map<Long, FinancialInstrumentModel> instruments = new LinkedHashMap<>();
     private long nextId = 1;
@@ -49,20 +49,18 @@ public class FinancialInstrumentRepositoryImpl implements FinancialInstrumentRep
 
     @Override
     public synchronized FinancialInstrumentModel save(FinancialInstrumentModel model) {
-        if (instruments.values().stream().anyMatch(existing ->
-                !existing.id().equals(model.id())
-                        && (java.util.Objects.equals(existing.name(), model.name())
-                        || java.util.Objects.equals(existing.symbol(), model.symbol())))) {
-            throw new com.stocktrading.dataloader1.domain.exception.AlreadySubscribedException(
-                    "Model with provided name or symbol is already subscribed " + model);
+        Optional<FinancialInstrumentModel> existing = instruments.values().stream()
+                .filter(m -> Objects.equals(m.name(), model.name())
+                        && Objects.equals(m.symbol(), model.symbol()))
+                .findFirst();
+        if (existing.isPresent()) {
+            return existing.get();
         }
-        FinancialInstrumentModel toSave = model.id() != null && instruments.containsKey(model.id())
-                ? model
-                : FinancialInstrumentModel.builder()
-                        .id(nextId++)
-                        .name(model.name())
-                        .symbol(model.symbol())
-                        .build();
+        FinancialInstrumentModel toSave = FinancialInstrumentModel.builder()
+                .id(nextId++)
+                .name(model.name())
+                .symbol(model.symbol())
+                .build();
         instruments.put(toSave.id(), toSave);
         return toSave;
     }
