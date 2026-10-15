@@ -33,8 +33,10 @@ Always read the class and the collaborators it depends on (ports, models, caller
 - **L – Liskov Substitution**: flag overrides that strengthen preconditions, weaken postconditions, throw unexpected
   exceptions, return null where contract forbids, or are no-ops for inherited behavior.
 - **I – Interface Segregation**: flag fat interfaces/ports forcing unused methods; suggest smaller role-based ports.
-- **D – Dependency Inversion**: domain must depend on `domain.ports` abstractions, not concrete adapters or
-  framework types; flag `new` of collaborators, static/global access, field injection (prefer constructor injection).
+- **D – Dependency Inversion**: domain must depend on `domain.ports` abstractions, not concrete adapters.
+  Keep framework types out of `domain.model` and `domain.ports`; allow Spring wiring/scheduling in
+  `domain.service` and `domain.usecase`. Flag `new` of collaborators, static/global access, field injection
+  (prefer constructor injection).
 
 ## OOP
 - Encapsulation (no leaked mutable state, no public fields), cohesion, low coupling.
