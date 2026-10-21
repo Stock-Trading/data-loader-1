@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
 @Configuration
-public class SubscriptionManagerRestClient {
+class SubscriptionManagerRestClient {
 
     @Bean
-    public RestClient subscriptionManagerSimpleRestClient() {
+    RestClient subscriptionManagerSimpleRestClient() {
         return RestClient.create();
     }
 

@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 @Log4j2
-public class FinnHubApiClient {
+class FinnHubApiClient {
 
     private final RemoteSecretsManagerClient remoteSecretsManagerClient;
 
     @Bean
-    public WebSocket FinnHubWebSocketClient(OkHttpClient client, FinnHubApiHandler handler) {
+    WebSocket FinnHubWebSocketClient(OkHttpClient client, FinnHubApiHandler handler) {
         Request request = new Request.Builder()
                 .url(buildUrl())
                 .build();

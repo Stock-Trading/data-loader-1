@@ -19,12 +19,11 @@ import java.util.List;
 @Component
 @Log4j2
 @AllArgsConstructor
-public class FinnHubApiHandler extends WebSocketListener {
+class FinnHubApiHandler extends WebSocketListener {
 
     private final FinancialInstrumentPriceMapper mapper;
     private final FinancialInstrumentService financialInstrumentService;
     private final ApplicationEventPublisher eventPublisher;
-
     private final ObjectMapper jsonMapper;
 
     @Override

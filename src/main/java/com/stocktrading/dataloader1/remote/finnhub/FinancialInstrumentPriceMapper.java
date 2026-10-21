@@ -3,13 +3,13 @@ package com.stocktrading.dataloader1.remote.finnhub;
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.math.BigDecimal;
 
 @Component
-public class FinancialInstrumentPriceMapper {
+class FinancialInstrumentPriceMapper {
 
     FinancialInstrumentPriceModel mapToModel(FinancialInstrumentPriceResponse financialInstrumentPriceResponse) {
         return FinancialInstrumentPriceModel.builder()
