@@ -1,6 +1,7 @@
 package com.stocktrading.dataloader1.domain.usecase;
 
 import com.stocktrading.dataloader1.domain.service.DataLoaderService;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ public class RegularCheckInOfDataLoaderUseCase {
     }
 
     @Scheduled(fixedDelay = 1000)
+    @Async
     public void checkInRegularly() {
         dataLoaderService.checkInDataLoaderToSubscriptionManager();
     }

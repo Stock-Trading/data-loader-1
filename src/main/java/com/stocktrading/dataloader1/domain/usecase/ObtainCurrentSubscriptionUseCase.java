@@ -6,6 +6,7 @@ import com.stocktrading.dataloader1.domain.ports.FinancialInstrumentRepository;
 import com.stocktrading.dataloader1.domain.ports.SubscriptionManagerClient;
 import com.stocktrading.dataloader1.domain.service.FinancialInstrumentService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,7 @@ public class ObtainCurrentSubscriptionUseCase {
     }
 
     @Scheduled(fixedDelay = 5000)
+    @Async
     public void obtainSubscription() {
         SubscriptionModel model = subscriptionManagerClient.getSubscription();
         log.info("Current subscription: {}", model.toString());

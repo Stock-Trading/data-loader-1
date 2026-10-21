@@ -5,6 +5,7 @@ import com.stocktrading.dataloader1.domain.ports.SubscriptionManagerClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ public class DataLoaderService {
     }
 
     @EventListener(ApplicationReadyEvent.class)
+    @Async
     public void registerDataLoaderToSubscriptionManagerOnStartup() {
         log.info("Starting procedure of registering Data Loader to Subscription Manager after application startup");
         tryToRegisterToSubscriptionManager();
@@ -31,6 +33,7 @@ public class DataLoaderService {
     /// (or became unreachable afterward), so a temporary outage of that service never prevents
     /// this application from starting or keeps running.
     @Scheduled(fixedDelay = 30000, initialDelay = 30000)
+    @Async
     public void retryRegistrationToSubscriptionManagerIfNeeded() {
         if (!registeredToSubscriptionManager.get()) {
             log.info("Data Loader is not yet registered in Subscription Manager, retrying registration");
