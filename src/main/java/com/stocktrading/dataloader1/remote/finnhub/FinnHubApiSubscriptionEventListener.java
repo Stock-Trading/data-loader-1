@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.WebSocket;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ class FinnHubApiSubscriptionEventListener {
     private final ObjectMapper jsonMapper;
 
     @EventListener
+    @Async
     void onSubscriptionStateChangeEvent(FinancialInstrumentSubscriptionStateChangedEvent event) {
         switch (event.getAction()) {
             case SUBSCRIBED -> prepareAndSendMessage(finnHubWebSocketClient, event, FinnHubMessageType.SUBSCRIBE);
