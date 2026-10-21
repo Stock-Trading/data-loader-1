@@ -24,7 +24,6 @@ public class FinnHubApiHandler extends WebSocketListener {
     private final FinancialInstrumentPriceMapper mapper;
     private final FinancialInstrumentService financialInstrumentService;
     private final ApplicationEventPublisher eventPublisher;
-
     private final ObjectMapper jsonMapper;
 
     @Override
