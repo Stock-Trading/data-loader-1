@@ -8,17 +8,18 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
 @EnableAsync
-class KafkaPublisherAsyncConfig {
+class KafkaPublisherExecutorConfig {
 
     static final String KAFKA_PUBLISHER_EXECUTOR = "kafkaPublisherExecutor";
 
     @Bean(KAFKA_PUBLISHER_EXECUTOR)
     TaskExecutor kafkaPublisherExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(1);
-        executor.setMaxPoolSize(1);
-        executor.setQueueCapacity(10_000);
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(100_000);
         executor.setThreadNamePrefix("kafka-publisher-");
         return executor;
     }
+
 }
