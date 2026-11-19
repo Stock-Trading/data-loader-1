@@ -1,7 +1,6 @@
 package com.stocktrading.dataloader1.remote.finnhub;
 
-import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
-import com.stocktrading.dataloader1.domain.queue.FinancialInstrumentPriceProducer;
+import com.stocktrading.dataloader1.domain.ports.DataProcessor;
 import com.stocktrading.dataloader1.domain.service.FinancialInstrumentService;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
@@ -9,7 +8,6 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
@@ -19,24 +17,18 @@ import java.util.List;
 @Log4j2
 class FinnHubApiHandler extends WebSocketListener {
 
-    private final FinnHubMapper mapper;
     private final FinancialInstrumentService financialInstrumentService;
-    private final FinancialInstrumentPriceProducer priceProducer;
     private final ObjectMapper jsonMapper;
-    private final TaskExecutor finnHubMapperExecutor;
+    private final DataProcessor dataProcessor;
 
     private boolean running = false;
 
-    FinnHubApiHandler(FinnHubMapper mapper,
-                      FinancialInstrumentService financialInstrumentService,
-                      FinancialInstrumentPriceProducer priceProducer,
+    FinnHubApiHandler(FinancialInstrumentService financialInstrumentService,
                       ObjectMapper jsonMapper,
-                      TaskExecutor finnHubMapperExecutor) {
-        this.mapper = mapper;
+                      DataProcessor dataProcessor) {
         this.financialInstrumentService = financialInstrumentService;
-        this.priceProducer = priceProducer;
         this.jsonMapper = jsonMapper;
-        this.finnHubMapperExecutor = finnHubMapperExecutor;
+        this.dataProcessor = dataProcessor;
     }
 
     @Override
@@ -50,18 +42,7 @@ class FinnHubApiHandler extends WebSocketListener {
             } else if (running) {
                 //messages are deserialized on other thread then one running onMessage() method for near-live processing
                 //receiving messages must be as fast as possible
-                finnHubMapperExecutor.execute(() -> {
-                    log.info("Deserializing FinnHub response {}...", finnHubResponseJson.substring(1, 15));
-                            List<FinancialInstrumentPriceModel> priceList = mapper.deserialize(finnHubResponseJson);
-                            priceList.forEach(it -> {
-                                try {
-                                    priceProducer.produce(it);
-                                } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            });
-                        }
-                );
+                dataProcessor.process(finnHubResponseJson);
             }
         } catch (Exception e) {
             log.error("FinnHub WS client: caught {} on message: {}", e.getClass(), e.getMessage());

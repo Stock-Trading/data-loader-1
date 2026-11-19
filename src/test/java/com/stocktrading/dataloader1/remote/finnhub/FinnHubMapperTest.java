@@ -33,7 +33,7 @@ class FinnHubMapperTest {
                 """;
 
         // when
-        List<FinancialInstrumentPriceModel> result = mapper.deserialize(json);
+        List<FinancialInstrumentPriceModel> result = mapper.map(json);
 
         // then
         assertEquals(1, result.size());
@@ -57,7 +57,7 @@ class FinnHubMapperTest {
                 """;
 
         // when
-        List<FinancialInstrumentPriceModel> result = mapper.deserialize(json);
+        List<FinancialInstrumentPriceModel> result = mapper.map(json);
 
         // then
         assertEquals(2, result.size());
@@ -78,7 +78,7 @@ class FinnHubMapperTest {
                 """;
 
         // when
-        List<FinancialInstrumentPriceModel> result = mapper.deserialize(json);
+        List<FinancialInstrumentPriceModel> result = mapper.map(json);
 
         // then
         assertTrue(result.isEmpty());
@@ -97,7 +97,7 @@ class FinnHubMapperTest {
                 """;
 
         // when
-        List<FinancialInstrumentPriceModel> result = mapper.deserialize(json);
+        List<FinancialInstrumentPriceModel> result = mapper.map(json);
 
         // then
         assertTrue(result.isEmpty());
@@ -115,6 +115,6 @@ class FinnHubMapperTest {
 
         // when
         // then
-        assertThrows(JacksonException.class, () -> mapper.deserialize(json));
+        assertThrows(JacksonException.class, () -> mapper.map(json));
     }
 }

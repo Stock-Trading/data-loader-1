@@ -1,6 +1,7 @@
 package com.stocktrading.dataloader1.remote.finnhub;
 
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
+import com.stocktrading.dataloader1.domain.ports.DataMapper;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
@@ -11,7 +12,7 @@ import java.time.ZoneId;
 import java.util.List;
 
 @Component
-class FinnHubMapper {
+class FinnHubMapper implements DataMapper<FinancialInstrumentPriceModel> {
 
     private final ObjectMapper objectMapper;
 
@@ -19,7 +20,8 @@ class FinnHubMapper {
         this.objectMapper = objectMapper;
     }
 
-    List<FinancialInstrumentPriceModel> deserialize(String finnHubResponseJson) {
+    @Override
+    public List<FinancialInstrumentPriceModel> map(String finnHubResponseJson) {
         FinnHubResponseDto responseDto = objectMapper.readValue(finnHubResponseJson, FinnHubResponseDto.class);
         if (responseDto.dataList() == null) {
             return List.of();
