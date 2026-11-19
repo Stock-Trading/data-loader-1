@@ -19,22 +19,41 @@ Domain-Driven Design + hexagonal (ports & adapters), with domain logic under
 - `domain.model` — framework-independent core models (`FinancialInstrumentModel`, `FinancialInstrumentPriceModel`,
   `SubscriptionModel`, `DataLoaderModel`). Built with Lombok `@Builder`; prefer records where possible.
 - `domain.ports` — interfaces the domain depends on, implemented by adapters:
-  `SubscriptionManagerClient`, `FinancialInstrumentRepository`, `RemoteSecretsManagerClient` (Kafka publishing
-  port lives similarly — check `event`/`ports` before assuming there isn't one).
-- `domain.service` — application services orchestrating use cases (`DataLoaderService`, `FinancialInstrumentService`).
+  `SubscriptionManagerClient`, `FinancialInstrumentRepository`, `RemoteSecretsManagerClient`, `EventPublisher`
+  (publishes events externally, i.e. Kafka), `DataProcessor` (entry point for raw provider data) and
+  `DataMapper<T>` (raw `String` -> `List<T>`, implemented by e.g. `FinnHubMapper`).
+- `domain.service` — application services orchestrating use cases (`DataLoaderService`, `FinancialInstrumentService`,
+  `FinancialInstrumentPriceService` — the `DataProcessor` implementation).
+- `domain.queue` — **internal** producer-consumer queue for price events (not Kafka — Kafka is external):
+  `FinancialInstrumentPriceProducer` -> `FinancialInstrumentPriceQueue` -> `FinancialInstrumentPriceConsumer`.
+- `domain.executor` — task executor config for the data processor.
 - `domain.usecase` — scheduled/entry-point use cases (`@Scheduled` jobs), e.g. `RegularCheckInOfDataLoaderUseCase`,
   `ObtainCurrentSubscriptionUseCase`.
 - `domain.event` / `domain.exception` — domain events (e.g. `FinancialInstrumentSubscriptionStateChangedEvent`)
   and domain-specific exceptions (`AlreadySubscribedException`, `ModelNotFoundException`).
 
 Adapters:
-- `data` — JPA persistence adapter (`FinancialInstrumentEntity`, `FinancialInstrumentJpaRepository`,
-  `FinancialInstrumentRepositoryImpl`), implements `FinancialInstrumentRepository`.
+- `data` — in-memory adapter (`FinancialInstrumentRepositoryImpl`, synchronized `LinkedHashMap`), implements
+  `FinancialInstrumentRepository`. Not persisted between runs; there is no JPA/PostgreSQL dependency currently.
 - `remote.subscriptionmanager` — REST client implementing `SubscriptionManagerClient`.
 - `remote.finnhub` — OkHttp WebSocket client/handler subscribing to live trade updates from FinnHub.
 - `remote.kafkaeventpublisher` — publishes unified price events to Kafka.
 - `remote.secretmanager` — AWS Secrets Manager integration for API keys (`RemoteSecretsManagerClient`).
 - `remote.restapi` — local REST API (see below).
+
+# Asynchronous processing (producer-consumer)
+Price flow: `FinnHubApiHandler.onMessage()` -> `DataProcessor.process(rawJson)` (returns immediately; mapping runs on
+single-thread `dataProcessorTaskExecutor`) -> `DataMapper` -> `FinancialInstrumentPriceProducer.produce()` ->
+`FinancialInstrumentPriceQueue` -> `FinancialInstrumentPriceConsumer` (loop on single-thread
+`financialInstrumentPriceQueueTaskExecutor`, started on `ApplicationStartedEvent`) -> `EventPublisher` (Kafka).
+- Keep the WebSocket `onMessage` path fast and non-blocking; do heavy work (parsing, publishing) off that thread.
+- Queue is a lock-based FIFO (`ReentrantLock` + `Condition`); `put()` never blocks and drops the **oldest** event when
+  full; `take()` blocks when empty. Capacity: `data-loader.price-queue.capacity` (default 100000).
+- Executors are deliberately single-threaded to preserve FIFO order — don't increase pool size without
+  addressing ordering.
+- The consumer must catch and log non-interrupt exceptions and keep looping; restore interrupt flag on
+  `InterruptedException`.
+- Don't confuse this internal queue with Kafka events published to the external broker.
 
 # Conventions
 - Each package that crosses a layer boundary (`remote.*`) typically has its own package-private DTOs
@@ -55,7 +74,7 @@ Adapters:
 # About the `restapi` package
 
 This module exposes a local REST API (`/api/v1/financialInstrument`) with full CRUD-style endpoints
-(get/subscribe/unsubscribe by id, name or symbol), backed by a PostgreSQL-persisted `FinancialInstrumentEntity`.
+(get/subscribe/unsubscribe by id, name or symbol), backed by the in-memory store of subscribed instruments.
 
 This predates (and overlaps with) the Subscription Manager integration — an early, self-contained way to manage
 subscriptions before that responsibility moved to the external Subscription Manager service. It's slated to be
@@ -67,7 +86,8 @@ storage) — don't assume it should be removed or is dead code.
 - Scheduled check-ins with Subscription Manager (health/heartbeat) — `RegularCheckInOfDataLoaderUseCase`
 - Scheduled fetch of current subscription — `ObtainCurrentSubscriptionUseCase`
 - Subscribe to live trade updates via FinnHub WebSocket for instruments in the current subscription
-- Publish unified price events to Kafka
+- Map incoming price messages asynchronously and buffer them in the internal price queue
+- Consume the queue and publish unified price events to Kafka
 
 # Code guidelines
 - Follow standard Java conventions and best practices; IntelliJ default formatting.
@@ -76,14 +96,13 @@ storage) — don't assume it should be removed or is dead code.
 - Keep domain code framework-agnostic — no Spring/JPA/Jackson/OkHttp types in `domain.model` or `domain.ports`.
 - When adding a new external integration, add it under `remote.<providerName>` with its own DTOs + mapper,
   and expose only a `domain.ports` interface to the rest of the app.
-- Write tests alongside new use cases/services; current test coverage is minimal
-  (`DataLoader1ApplicationTests` is just a context-load smoke test) — new features should include unit tests.
+- Write tests alongside new use cases/services; coverage is still limited (existing tests: context-load smoke test,
+  `FinancialInstrumentPriceQueueTest`, `FinnHubMapperTest`) — new features should include unit tests.
 
 # Tech stack
 - Java 25
 - Spring Boot 4.1
 - Spring Kafka
-- Spring Data JPA + PostgreSQL
 - OkHttp (WebSocket client for FinnHub)
 - AWS Secrets Manager SDK
 - Lombok, Jackson (Jackson 3 `tools.jackson` namespace is used, not the legacy `com.fasterxml.jackson.databind`)

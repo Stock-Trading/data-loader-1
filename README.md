@@ -13,18 +13,41 @@ instrument prices from a public market-data provider and streaming them into the
    updates for each instrument.
 3. **Unifies the data format** — incoming provider-specific payloads are mapped into a common internal domain
    model, decoupling the rest of the system from FinnHub's (or any future provider's) message format.
-4. **Publishes live prices to Kafka** — the normalized price updates are published as events on a Kafka topic, to
+4. **Processes prices asynchronously** — the WebSocket thread only hands the raw message over; mapping and
+   publishing happen on separate threads, connected by an internal in-memory queue (producer-consumer pattern).
+5. **Publishes live prices to Kafka** — the normalized price updates are published as events on a Kafka topic, to
    be consumed by other services in the platform.
 
 ```
 Subscription Manager  --HTTP-->  data-loader-1  --WebSocket-->  FinnHub API
                                        |
                                        v
-                              (unify data format)
+                       DataProcessor (mapping on a single thread)
+                                       |
+                                       v
+                    internal price queue (producer -> consumer)
                                        |
                                        v
                                 Apache Kafka topic
 ```
+
+### Asynchronous processing (internal queue)
+
+The internal queue is unrelated to Kafka (an external service); it only decouples the stages inside this app:
+
+1. `FinnHubApiHandler.onMessage()` passes the raw JSON to `DataProcessor` and returns immediately, so receiving
+   WebSocket messages stays as fast as possible.
+2. `FinancialInstrumentPriceService` (the `DataProcessor`) maps the payload on a dedicated single-thread executor
+   (`dataProcessorTaskExecutor`) using a `DataMapper` (implemented by `FinnHubMapper`) and hands each resulting
+   `FinancialInstrumentPriceModel` to `FinancialInstrumentPriceProducer`.
+3. `FinancialInstrumentPriceQueue` is a lock-based FIFO buffer. `put()` never blocks: when full, the **oldest**
+   event is dropped (with a warning) so the freshest prices win. `take()` blocks while the queue is empty.
+   Capacity is configured with `data-loader.price-queue.capacity` (default `100000`).
+4. `FinancialInstrumentPriceConsumer` runs a loop on its own single-thread executor
+   (`financialInstrumentPriceQueueTaskExecutor`, started on `ApplicationStartedEvent`), takes prices from the queue
+   and publishes them through the `EventPublisher` port (Kafka). Errors are logged and the loop continues.
+
+Both executors use a single thread to preserve FIFO ordering.
 
 ## Architecture
 
@@ -32,12 +55,14 @@ The codebase follows a loose hexagonal / ports-and-adapters style:
 
 - `domain` — core business logic, independent of any framework/provider specifics
   - `model` — internal domain models (e.g. `FinancialInstrumentModel`, `FinancialInstrumentPriceModel`, `SubscriptionModel`)
-  - `ports` — interfaces the domain depends on (`SubscriptionManagerClient`, `EventPublisher`, `RemoteSecretsManagerClient`, `FinancialInstrumentRepository`)
-  - `service` — application services orchestrating use cases (`FinancialInstrumentService`, `DataLoaderService`)
+  - `ports` — interfaces the domain depends on (`SubscriptionManagerClient`, `EventPublisher`, `RemoteSecretsManagerClient`, `FinancialInstrumentRepository`, `DataProcessor`, `DataMapper`)
+  - `service` — application services orchestrating use cases (`FinancialInstrumentService`, `DataLoaderService`, `FinancialInstrumentPriceService`)
+  - `queue` — internal producer-consumer queue for price events (`FinancialInstrumentPriceQueue`, `FinancialInstrumentPriceProducer`, `FinancialInstrumentPriceConsumer`) and its executor config
+  - `executor` — task executor config for the data processor
   - `event` / `exception` — domain events and exceptions
 - `remote` — adapters implementing the ports above
   - `subscriptionmanager` — REST client that registers/checks in with the Subscription Manager and fetches the current subscription
-  - `finnhub` — WebSocket client/handler talking to the FinnHub API
+  - `finnhub` — WebSocket client/handler talking to the FinnHub API; `FinnHubMapper` maps its payloads to domain prices
   - `kafkaeventpublisher` — publishes unified price events to Kafka
   - `restapi` — local REST API for subscribed financial instruments (see below)
   - `secretmanager` — integration with AWS Secrets Manager for API keys
@@ -48,7 +73,7 @@ The codebase follows a loose hexagonal / ports-and-adapters style:
 - Java 25
 - Spring Boot 4.1
 - Spring Kafka
-- - OkHttp (WebSocket client for FinnHub)
+- OkHttp (WebSocket client for FinnHub)
 - AWS Secrets Manager SDK
 - Lombok, Jackson
 
