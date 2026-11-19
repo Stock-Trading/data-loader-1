@@ -14,7 +14,6 @@ public class FinancialInstrumentPriceQueueTaskExecutorConfig {
         //only one thread to keep FIFO order
         executor.setCorePoolSize(1);
         executor.setMaxPoolSize(1);
-        executor.setQueueCapacity(1000);
         executor.setThreadNamePrefix("price-event-queue-executor-");
         executor.initialize();
         return executor;
