@@ -15,8 +15,8 @@ class KafkaPublisherExecutorConfig {
     @Bean(KAFKA_PUBLISHER_EXECUTOR)
     TaskExecutor kafkaPublisherExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(10);
+        executor.setCorePoolSize(1);
+        executor.setMaxPoolSize(1);
         executor.setQueueCapacity(100_000);
         executor.setThreadNamePrefix("kafka-publisher-");
         return executor;
