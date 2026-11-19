@@ -28,13 +28,7 @@ public class FinancialInstrumentPriceService implements DataProcessor {
     public void process(String data) {
         dataProcessorTaskExecutor.execute(() -> {
                     List<FinancialInstrumentPriceModel> priceList = mapper.map(data);
-                    priceList.forEach(it -> {
-                        try {
-                            priceProducer.produce(it);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
+                    priceList.forEach(priceProducer::produce);
                 }
         );
     }

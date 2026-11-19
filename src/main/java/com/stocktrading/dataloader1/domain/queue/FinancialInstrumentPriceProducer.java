@@ -13,7 +13,7 @@ public class FinancialInstrumentPriceProducer {
         this.queue = queue;
     }
 
-    public void produce(FinancialInstrumentPriceModel priceModel) throws InterruptedException {
+    public void produce(FinancialInstrumentPriceModel priceModel) {
         queue.put(priceModel);
     }
 
