@@ -34,12 +34,15 @@ public class FinancialInstrumentPriceConsumer {
     @EventListener(ApplicationStartedEvent.class)
     void consumeAllTheTime() {
         financialInstrumentPriceQueueTaskExecutor.execute(() -> {
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 try {
                     FinancialInstrumentPriceModel price = consume();
                     eventPublisher.publishFinancialInstrumentPriceInfoEvent(price);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    log.info("Caught {} while consuming price events from internal queue", e.getClass());
+                    Thread.currentThread().interrupt();
+                } catch (Exception e) {
+                    log.error("Error consuming price, continuing", e);
                 }
             }
         });
