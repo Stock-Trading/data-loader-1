@@ -13,4 +13,5 @@ class StockPriceEventMapper {
                 .dateTime(model.dateTime())
                 .build();
     }
+
 }
