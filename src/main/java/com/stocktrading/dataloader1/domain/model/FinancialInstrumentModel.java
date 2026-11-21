@@ -4,6 +4,11 @@ import lombok.Builder;
 
 import java.util.Objects;
 
+/// Represents Financial Instrument
+///
+/// @param id     identifier
+/// @param name   name, e.g. Amazon Inc.
+/// @param symbol also known as ticker, e.g. AMZN
 @Builder
 public record FinancialInstrumentModel(Long id,
                                        String name,

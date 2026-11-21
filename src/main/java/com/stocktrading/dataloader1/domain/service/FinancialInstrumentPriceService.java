@@ -1,12 +1,16 @@
 package com.stocktrading.dataloader1.domain.service;
 
+import com.stocktrading.dataloader1.domain.mapper.DataMapper;
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
-import com.stocktrading.dataloader1.domain.ports.DataMapper;
 import com.stocktrading.dataloader1.domain.ports.DataProcessor;
+import com.stocktrading.dataloader1.domain.queue.FinancialInstrumentPriceConsumer;
 import com.stocktrading.dataloader1.domain.queue.FinancialInstrumentPriceProducer;
+import com.stocktrading.dataloader1.domain.queue.FinancialInstrumentPriceQueue;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -24,6 +28,13 @@ public class FinancialInstrumentPriceService implements DataProcessor {
         this.priceProducer = priceProducer;
     }
 
+    /// Streams {@link FinancialInstrumentPriceModel#FinancialInstrumentPriceModel(String, BigDecimal, LocalDateTime)}
+    /// data (events) into internal queue
+    ///
+    /// @param data any data that can be deserialized into Financial Instrument Price
+    /// @see FinancialInstrumentPriceModel
+    /// @see FinancialInstrumentPriceQueue
+    /// @see FinancialInstrumentPriceConsumer
     @Override
     public void process(String data) {
         dataProcessorTaskExecutor.execute(() -> {
