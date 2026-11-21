@@ -7,6 +7,15 @@ applyTo: "src/test/**/*"
 - use JUnit 5 and its 'Assertions' (deliberate choice)
 - prefer pure unit tests (no `@SpringBootTest`) for domain/service/mapper classes; reserve Spring context tests for integration-level tests
 - use Mockito for mocking dependencies (constructor injection via `@Mock`/`@InjectMocks` or manual mocks)
+- do not mock infrastructure dependencies whose real behavior the test relies on (e.g. `ObjectMapper` used for JSON parsing); use a real instance instead
+- when such a dependency is a bean defined in a `@Configuration` class (e.g. `ObjectMapperConfig`), obtain it by calling the config's `@Bean` method directly and inject it with `@Spy`, so the test uses the production configuration without starting Spring:
+  ```java
+  @Spy
+  private ObjectMapper objectMapper = new ObjectMapperConfig().objectMapper();
+
+  @InjectMocks
+  private FinnHubMapper mapper;
+  ```
 - annotate test classes with `@ExtendWith(MockitoExtension.class)`
 - use given, when, then convention with one line of space between each section; within the section do not use empty lines if not needed for clarity
 - use `@DisplayName` annotation with given, when and then sections. Each section should start at new line and end with comma, use java text blocks for strings
