@@ -9,8 +9,6 @@ import com.stocktrading.dataloader1.domain.queue.FinancialInstrumentPriceQueue;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
