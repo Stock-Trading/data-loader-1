@@ -28,13 +28,14 @@ public class FinancialInstrumentPriceService implements DataProcessor {
         this.priceProducer = priceProducer;
     }
 
-    /// Streams {@link FinancialInstrumentPriceModel#FinancialInstrumentPriceModel(String, BigDecimal, LocalDateTime)}
-    /// data (events) into internal queue
-    ///
-    /// @param data any data that can be deserialized into Financial Instrument Price
-    /// @see FinancialInstrumentPriceModel
-    /// @see FinancialInstrumentPriceQueue
-    /// @see FinancialInstrumentPriceConsumer
+    /**
+     * Streams `FinancialInstrumentPriceModel` data (events) into internal queue.
+     *
+     * @param data any data that can be deserialized into Financial Instrument Price
+     * @see FinancialInstrumentPriceModel
+     * @see FinancialInstrumentPriceQueue
+     * @see FinancialInstrumentPriceConsumer
+     */
     @Override
     public void process(String data) {
         dataProcessorTaskExecutor.execute(() -> {
