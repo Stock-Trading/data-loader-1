@@ -20,6 +20,7 @@ applyTo: "src/test/**/*"
 - use given, when, then convention with one line of space between each section; within the section do not use empty lines if not needed for clarity
 - use `@DisplayName` annotation with given, when and then sections. Each section should start at new line and end with comma, use java text blocks for strings
 - for test method name you can use just "should"
+- in assertions, add message explaining what result was expected when assertion fails
 
 Full example combining the conventions above:
 
@@ -40,7 +41,7 @@ void should() {
     FinancialInstrumentModel result = service.subscribeToTheInstrument(model);
 
     // then
-    assertEquals(model, result);
+    assertEquals(model, result, "Result should equal model");
     verify(eventPublisher).publishEvent(any(FinancialInstrumentSubscriptionStateChangedEvent.class));
 }
 ```
