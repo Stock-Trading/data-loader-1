@@ -1,7 +1,7 @@
 package com.stocktrading.dataloader1.remote.finnhub;
 
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
-import com.stocktrading.dataloader1.domain.ports.DataMapper;
+import com.stocktrading.dataloader1.domain.mapper.DataMapper;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 

@@ -2,7 +2,7 @@ package com.stocktrading.dataloader1.domain.service;
 
 import com.stocktrading.dataloader1.domain.mapper.DataMapper;
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
-import com.stocktrading.dataloader1.domain.ports.DataProcessor;
+import com.stocktrading.dataloader1.domain.processor.DataProcessor;
 import com.stocktrading.dataloader1.domain.queue.FinancialInstrumentPriceConsumer;
 import com.stocktrading.dataloader1.domain.queue.FinancialInstrumentPriceProducer;
 import com.stocktrading.dataloader1.domain.queue.FinancialInstrumentPriceQueue;

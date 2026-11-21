@@ -5,4 +5,5 @@ class FinnHubApiClientRuntimeException extends RuntimeException {
     FinnHubApiClientRuntimeException(String message) {
         super(message);
     }
+
 }

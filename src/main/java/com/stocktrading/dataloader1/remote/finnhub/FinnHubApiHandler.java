@@ -1,6 +1,6 @@
 package com.stocktrading.dataloader1.remote.finnhub;
 
-import com.stocktrading.dataloader1.domain.ports.DataProcessor;
+import com.stocktrading.dataloader1.domain.processor.DataProcessor;
 import com.stocktrading.dataloader1.domain.service.FinancialInstrumentService;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;

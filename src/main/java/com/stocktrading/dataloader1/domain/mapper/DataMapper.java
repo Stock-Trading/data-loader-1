@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.domain.ports;
+package com.stocktrading.dataloader1.domain.mapper;
 
 import java.util.List;
 

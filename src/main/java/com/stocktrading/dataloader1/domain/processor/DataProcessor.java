@@ -1,4 +1,4 @@
-package com.stocktrading.dataloader1.domain.ports;
+package com.stocktrading.dataloader1.domain.processor;
 
 public interface DataProcessor {
 
