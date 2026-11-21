@@ -35,10 +35,10 @@ Subscription Manager  --HTTP-->  data-loader-1  --WebSocket-->  FinnHub API
 
 The internal queue is unrelated to Kafka (an external service); it only decouples the stages inside this app:
 
-1. `FinnHubApiHandler.onMessage()` passes the raw JSON to `DataProcessor` and returns immediately, so receiving
+1. `FinnHubApiHandler.onMessage()` passes the raw JSON to `DataProcessor` (from `domain.processor`) and returns immediately, so receiving
    WebSocket messages stays as fast as possible.
 2. `FinancialInstrumentPriceService` (the `DataProcessor`) maps the payload on a dedicated single-thread executor
-   (`dataProcessorTaskExecutor`) using a `DataMapper` (implemented by `FinnHubMapper`) and hands each resulting
+   (`dataProcessorTaskExecutor`) using a `DataMapper` (from `domain.mapper`, implemented by `FinnHubMapper`) and hands each resulting
    `FinancialInstrumentPriceModel` to `FinancialInstrumentPriceProducer`.
 3. `FinancialInstrumentPriceQueue` is a lock-based FIFO buffer. `put()` never blocks: when full, the **oldest**
    event is dropped (with a warning) so the freshest prices win. `take()` blocks while the queue is empty.
@@ -55,8 +55,10 @@ The codebase follows a loose hexagonal / ports-and-adapters style:
 
 - `domain` — core business logic, independent of any framework/provider specifics
   - `model` — internal domain models (e.g. `FinancialInstrumentModel`, `FinancialInstrumentPriceModel`, `SubscriptionModel`)
-  - `ports` — interfaces the domain depends on (`SubscriptionManagerClient`, `EventPublisher`, `RemoteSecretsManagerClient`, `FinancialInstrumentRepository`, `DataProcessor`, `DataMapper`)
-  - `service` — application services orchestrating use cases (`FinancialInstrumentService`, `DataLoaderService`, `FinancialInstrumentPriceService`)
+  - `ports` — interfaces the domain depends on (`SubscriptionManagerClient`, `EventPublisher`,   `RemoteSecretsManagerClient`, `FinancialInstrumentRepository`)
+    - `processor` — entry point for raw provider data (`DataProcessor`), implemented by `FinancialInstrumentPriceService`
+    - `mapper` — contract for converting raw provider `String` payloads into domain models (`DataMapper<T>`), implemented by e.g. `FinnHubMapper`
+    - `service` — application services orchestrating use cases (`FinancialInstrumentService`, `DataLoaderService`, `FinancialInstrumentPriceService`)
   - `queue` — internal producer-consumer queue for price events (`FinancialInstrumentPriceQueue`, `FinancialInstrumentPriceProducer`, `FinancialInstrumentPriceConsumer`) and its executor config
   - `executor` — task executor config for the data processor
   - `event` / `exception` — domain events and exceptions
