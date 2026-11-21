@@ -73,6 +73,34 @@ class FinancialInstrumentPriceQueueTest {
 
     @Test
     @DisplayName("""
+            given queue capacity is zero,
+            when the queue is constructed,
+            then it should throw an IllegalArgumentException
+            """)
+    void should_rejectZeroCapacity() {
+        // given
+        int capacity = 0;
+
+        // when / then
+        assertThrows(IllegalArgumentException.class, () -> new FinancialInstrumentPriceQueue(capacity));
+    }
+
+    @Test
+    @DisplayName("""
+            given queue capacity is negative,
+            when the queue is constructed,
+            then it should throw an IllegalArgumentException
+            """)
+    void should_rejectNegativeCapacity() {
+        // given
+        int capacity = -1;
+
+        // when / then
+        assertThrows(IllegalArgumentException.class, () -> new FinancialInstrumentPriceQueue(capacity));
+    }
+
+    @Test
+    @DisplayName("""
             given full queue,
             when many prices are put,
             then put should never block and only the latest prices should remain

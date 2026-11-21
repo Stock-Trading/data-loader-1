@@ -25,6 +25,9 @@ public class FinancialInstrumentPriceQueue {
     private final Condition notEmpty = lock.newCondition();
 
     FinancialInstrumentPriceQueue(@Value("${data-loader.price-queue.capacity:100000}") int capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("Queue capacity must be greater than zero");
+        }
         this.capacity = capacity;
         this.buffer = new ArrayDeque<>(Math.min(capacity, 1024));
     }
