@@ -1,6 +1,5 @@
 package com.stocktrading.dataloader1.domain.service;
 
-import com.stocktrading.dataloader1.domain.model.SubscriptionModel;
 import com.stocktrading.dataloader1.domain.ports.SubscriptionManagerClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

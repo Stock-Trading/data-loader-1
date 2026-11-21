@@ -1,0 +1,9 @@
+package com.stocktrading.dataloader1.remote.finnhub;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
+
+record FinnHubResponseDto(@JsonProperty("data") List<FinnHubFinancialInstrumentPriceResponse> dataList,
+                          @JsonProperty("type") String type) {
+}
