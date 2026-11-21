@@ -1,9 +1,12 @@
 package com.stocktrading.dataloader1.remote.finnhub;
 
+import com.stocktrading.dataloader1.config.ObjectMapperConfig;
 import com.stocktrading.dataloader1.domain.model.FinancialInstrumentPriceModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
@@ -17,8 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class FinnHubMapperTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final FinnHubMapper mapper = new FinnHubMapper(objectMapper);
+    @Spy
+    private ObjectMapper objectMapper = new ObjectMapperConfig().objectMapper();
+
+    @InjectMocks
+    private FinnHubMapper mapper;
 
     @Test
     @DisplayName("""
