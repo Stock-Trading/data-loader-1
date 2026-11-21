@@ -38,6 +38,7 @@ class FinnHubApiSubscriptionEventListener {
         try {
             String message = jsonMapper.writeValueAsString(messageRequestDto);
             if (!webSocket.send(message)) {
+                log.error("FinnHub WebSocket server rejected message {}", message);
                 throw new FinnHubApiClientRuntimeException("FinnHub WebSocket rejected message: " + messageRequestDto);
             }
             log.info("Sent message to FinnHub API {} as reaction to event {}", messageRequestDto, event);
